@@ -113,6 +113,8 @@
         </section>
       </div>
 
+      ${views.hydration.cardHtml(today)}
+
       ${store.list('sport').length ? `<section class="card">
         <div class="card-head"><h2>Beweging deze week</h2><a href="#/sport">Alles</a></div>
         ${views.sport.progressHtml(views.sport.thisWeek(today))}
@@ -139,6 +141,7 @@
     el.querySelector('[data-sport]').addEventListener('click', () => views.sport.openSport());
     el.querySelector('[data-bowel]').addEventListener('click', () => views.bowel.openBowel());
     el.querySelector('[data-food]').addEventListener('click', () => views.nutrition.openFood());
+    views.hydration.bindQuick(el, today);
     el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
     el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
     el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));

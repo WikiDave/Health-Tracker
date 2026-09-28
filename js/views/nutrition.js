@@ -1,4 +1,4 @@
-/* Voeding: eetdagboek per maaltijd, klachten na het eten en dagdoelen (groente, fruit, water). */
+/* Voeding: eetdagboek per maaltijd, klachten na het eten en dagdoelen (groente, fruit; drinken komt uit Drinken). */
 (function (HT) {
   'use strict';
   const { store, ui, utils, form } = HT;
@@ -49,13 +49,12 @@
 
   function openGoals(date) {
     HT.views.checkin.openDayPart({
-      title: 'Groente, fruit en drinken',
+      title: 'Groente en fruit',
       date,
       toastText: 'Voeding opgeslagen',
       fields: [
         { name: 'veg', label: 'Groente (gram)', type: 'number', half: true, help: '1 opscheplepel ≈ 50 gram' },
         { name: 'fruit', label: 'Fruit (stuks)', type: 'number', half: true },
-        { name: 'water', label: 'Drinken (glazen van 250 ml)', type: 'number', half: true, help: 'Water, thee, koffie en melk tellen mee.' },
         { name: 'appetite', label: 'Eetlust', type: 'scale', min: 1, max: 5, emoji: ['😶', '🙁', '😐', '🙂', '😋'] },
       ],
     });
@@ -64,10 +63,11 @@
   function goalsHtml(check) {
     return `<div class="goals">${GOALS.map((g) => {
       const v = check && check[g.key] != null ? Number(check[g.key]) : 0;
-      const pct = Math.min(100, Math.round((v / g.goal) * 100));
+      const goal = g.key === 'water' ? Math.round(HT.views.hydration.settings().goal / 25) / 10 : g.goal;
+      const pct = Math.min(100, Math.round((v / goal) * 100));
       return `<div class="goal">
-        <div class="goal-head"><span>${esc(g.label)}</span><span><strong>${formatNum(v)}</strong> / ${g.goal} ${esc(g.unit)}${v >= g.goal ? ' ✓' : ''}</span></div>
-        <div class="progress" role="progressbar" aria-label="${esc(g.label)}" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="${g.goal}"><span style="width:${pct}%"></span></div>
+        <div class="goal-head"><span>${g.key === 'water' ? '<a href="#/drinken">Drinken</a>' : esc(g.label)}</span><span><strong>${formatNum(v)}</strong> / ${formatNum(goal)} ${esc(g.unit)}${v >= goal ? ' ✓' : ''}</span></div>
+        <div class="progress" role="progressbar" aria-label="${esc(g.label)}" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="${goal}"><span style="width:${pct}%"></span></div>
       </div>`;
     }).join('')}</div>`;
   }
@@ -91,7 +91,7 @@
     el.innerHTML = `
       ${ui.pageHead('Voeding', '<button class="btn primary" data-add>+ Eten noteren</button>')}
       <section class="card">
-        <div class="card-head"><h2>Vandaag</h2><button class="btn small ghost" data-goals>Groente, fruit, drinken invullen</button></div>
+        <div class="card-head"><h2>Vandaag</h2><button class="btn small ghost" data-goals>Groente en fruit invullen</button></div>
         ${goalsHtml(check)}
         <p class="muted">${todays.length} maaltijd${todays.length === 1 ? '' : 'en'} genoteerd${kcalToday ? ` · ± ${formatNum(kcalToday)} kcal` : ''}${check && check.appetite ? ` · eetlust ${check.appetite}/5` : ''}</p>
         <p class="muted small">Advies Voedingscentrum (Schijf van Vijf): 250 gram groente, 2 stuks fruit en 1,5–2 liter drinken per dag. Heb je een dieet of aandoening? Volg dan het advies van je arts of diëtist.</p>

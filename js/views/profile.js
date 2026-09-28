@@ -147,7 +147,9 @@
   function renderOverview(el) {
     const today = todayISO();
     const p = store.data.profile;
-    const meds = sortBy(store.list('medications').filter((m) => utils.isMedActiveOn(m, today)), (m) => m.name.toLowerCase());
+    const activeItems = sortBy(store.list('medications').filter((m) => utils.isMedActiveOn(m, today)), (m) => m.name.toLowerCase());
+    const meds = activeItems.filter((m) => m.kind !== 'supplement');
+    const supplements = activeItems.filter((m) => m.kind === 'supplement');
     const labs = sortBy(store.list('labs'), 'date', -1).slice(0, 3);
     const visitsUp = sortBy(store.list('visits').filter((v) => v.date >= today), 'date');
     const visitsPast = sortBy(store.list('visits').filter((v) => v.date < today), 'date', -1).slice(0, 5);
@@ -171,7 +173,7 @@
     const outsideAvg = utils.average(envDays, 'outsideMinutes', '0000', today);
     const lifestyle = [
       ['Slaap (gem. 14 dagen)', avg14('sleepHours') ? `${formatNum(avg14('sleepHours').avg.toFixed(1))} uur per nacht${avg14('sleepQuality') ? `, kwaliteit ${formatNum(avg14('sleepQuality').avg.toFixed(1))}/5` : ''}` : ''],
-      ['Groente / fruit / drinken', avg14('veg') || avg14('fruit') || avg14('water') ? [avg14('veg') && `${Math.round(avg14('veg').avg)} g groente`, avg14('fruit') && `${formatNum(avg14('fruit').avg.toFixed(1))} fruit`, avg14('water') && `${formatNum(avg14('water').avg.toFixed(1))} glazen`].filter(Boolean).join(', ') + ' per dag' : ''],
+      ['Groente / fruit / drinken', avg14('veg') || avg14('fruit') || avg14('water') ? [avg14('veg') && `${Math.round(avg14('veg').avg)} g groente`, avg14('fruit') && `${formatNum(avg14('fruit').avg.toFixed(1))} fruit`, avg14('water') && `${formatNum(Math.round(avg14('water').avg * 250))} ml drinken`].filter(Boolean).join(', ') + ' per dag' : ''],
       ['Alcohol', alcFilled ? `gem. ${formatNum((Object.values(alcWeeks).reduce((a, b) => a + b, 0) / 4).toFixed(1))} glazen per week (4 weken)` : ''],
       ['Roken', quit ? `gestopt sinds ${formatDate(store.data.settings.quitDate)} (${quit.days} dagen)` : avg14('cigarettes') ? `gem. ${formatNum(avg14('cigarettes').avg.toFixed(1))} per dag` : ''],
       ['Cafeïne', avg14('coffee') ? `gem. ${formatNum(avg14('coffee').avg.toFixed(1))} koppen per dag` : ''],
@@ -200,6 +202,12 @@
             <td>${medTimes(m).length ? medTimes(m).map(esc).join(', ') : 'zo nodig'}${m.instructions ? `<br><small>${esc(m.instructions)}</small>` : ''}</td><td>${esc(m.reason || '')}</td></tr>`).join('')}</tbody>
         </table></div>` : '<p class="muted">Geen medicatie.</p>'}
       </section>
+
+      ${supplements.length ? `<section class="card"><h2>Supplementen en vitamines</h2><div class="table-wrap"><table>
+        <thead><tr><th>Supplement</th><th>Dosis</th><th>Wanneer</th><th>Waarvoor</th></tr></thead>
+        <tbody>${supplements.map((m) => `<tr><td><strong>${esc(m.name)}</strong>${m.brand ? ` <small>(${esc(m.brand)})</small>` : ''}</td><td>${esc(m.dose || '')}</td>
+          <td>${medTimes(m).length ? medTimes(m).map(esc).join(', ') : 'zo nodig'}</td><td>${esc(m.reason || '')}${m.advisedBy ? ` <small>– ${esc(m.advisedBy.toLowerCase())}</small>` : ''}</td></tr>`).join('')}</tbody>
+      </table></div></section>` : ''}
 
       ${rx.length ? `<section class="card"><h2>Lopende voorschriften</h2><ul class="list">
         ${rx.map((r) => `<li><strong>${esc(r.title)}</strong> – ${esc([r.dosage, r.prescriber, r.validUntil ? 'geldig tot ' + formatDate(r.validUntil) : ''].filter(Boolean).join(' · '))}</li>`).join('')}

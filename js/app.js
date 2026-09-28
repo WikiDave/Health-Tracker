@@ -8,6 +8,8 @@
     check: views.checkin,
     welzijn: views.wellbeing,
     medicatie: views.medication,
+    supplementen: views.supplements,
+    drinken: views.hydration,
     pijn: views.pain,
     sport: views.sport,
     stoelgang: views.bowel,

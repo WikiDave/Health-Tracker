@@ -46,7 +46,6 @@
     { name: 'temperature', label: 'Temperatuur (°C)', type: 'number', half: true },
     { name: 'glucose', label: 'Bloedsuiker (mmol/L)', type: 'number', half: true },
     { name: 'oxygen', label: 'Zuurstofsaturatie (%)', type: 'number', half: true },
-    { name: 'water', label: 'Water gedronken (glazen)', type: 'number', half: true },
     { name: 'steps', label: 'Stappen', type: 'number', half: true, placeholder: 'uit je telefoon of stappenteller' },
 
     { name: 'h5', type: 'heading', label: 'Overig' },
@@ -133,7 +132,7 @@
     if (c.sleepHours != null) parts.push(`😴 ${formatNum(c.sleepHours)} u slaap${c.bedtime && c.wakeTime ? ` (${c.bedtime}–${c.wakeTime})` : ''}`);
     if (c.veg) parts.push(`🥦 ${formatNum(c.veg)} g groente`);
     if (c.fruit) parts.push(`🍎 ${formatNum(c.fruit)} fruit`);
-    if (c.water) parts.push(`💧 ${formatNum(c.water)} glazen`);
+    if (utils.fluidMl(c)) parts.push(`💧 ${formatNum(utils.fluidMl(c))} ml`);
     if (c.alcohol) parts.push(`🍷 ${formatNum(c.alcohol)} glas alcohol`);
     if (c.cigarettes) parts.push(`🚬 ${formatNum(c.cigarettes)} sigaretten`);
     if (c.coffee) parts.push(`☕ ${formatNum(c.coffee)} koffie`);

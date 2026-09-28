@@ -1,4 +1,5 @@
-/* Medicatie: wat je moet nemen, wanneer, voorraad en therapietrouw. */
+/* Medicatie en supplementen: wat je moet nemen, wanneer, voorraad en therapietrouw.
+ * Supplementen/vitamines zijn medicatie-items met kind: 'supplement' en hebben een eigen scherm. */
 (function (HT) {
   'use strict';
   const { store, ui, utils, form } = HT;
@@ -23,33 +24,71 @@
     { name: 'notes', label: 'Notities / bijwerkingen', type: 'textarea' },
   ];
 
-  /** Opent het formulier; een object zonder id dient als voorinvulling voor een nieuw medicijn. */
-  function openMed(med) {
+  const SUPPLEMENT_FIELDS = [
+    { name: 'name', label: 'Naam supplement / vitamine', required: true, list: 'supplement-names', placeholder: 'bv. Vitamine D' },
+    { name: 'dose', label: 'Sterkte / dosis', half: true, placeholder: 'bv. 25 mcg (1000 IE)' },
+    { name: 'form', label: 'Vorm', type: 'select', options: ['Tablet', 'Capsule', 'Kauwtablet', 'Druppels', 'Drank', 'Poeder', 'Bruistablet', 'Gummy', 'Anders'], half: true },
+    { name: 'brand', label: 'Merk', half: true },
+    { name: 'times', label: 'Innametijden', type: 'times', half: true, placeholder: '08:00', help: 'Laat leeg voor "zo nodig".' },
+    { name: 'unitsPerDose', label: 'Aantal per inname', type: 'number', half: true, placeholder: '1' },
+    { name: 'instructions', label: 'Gebruiksaanwijzing', placeholder: 'bv. bij de maaltijd, niet samen met koffie of thee' },
+    { name: 'reason', label: 'Waarvoor', half: true, placeholder: 'bv. vitamine D-tekort' },
+    { name: 'advisedBy', label: 'Geadviseerd door', type: 'select', half: true, options: ['', 'Eigen initiatief', 'Huisarts', 'Specialist', 'Diëtist', 'Apotheek', 'Anders'] },
+    { name: 'startDate', label: 'Startdatum', type: 'date', half: true },
+    { name: 'endDate', label: 'Einddatum', type: 'date', half: true, help: 'Leeg = doorlopend.' },
+    { name: 'stock', label: 'Voorraad (stuks)', type: 'number', half: true, help: 'Wordt automatisch minder als je een inname afvinkt.' },
+    { name: 'active', label: 'Gebruik ik nu', type: 'checkbox' },
+    { name: 'notes', label: 'Notities / bijwerkingen', type: 'textarea' },
+  ];
+
+  const KINDS = {
+    med: {
+      title: 'Medicatie', noun: 'Medicijn', add: '+ Medicijn', fields: FIELDS, current: 'Huidige medicatie', stopped: 'Gestopte medicatie',
+      empty: 'Nog geen medicijnen toegevoegd.', icsName: 'medicatie-herinneringen.ics', defaults: { form: 'Tablet' },
+      match: (m) => m.kind !== 'supplement',
+    },
+    supplement: {
+      title: 'Supplementen & vitamines', noun: 'Supplement', add: '+ Supplement', fields: SUPPLEMENT_FIELDS, current: 'Gebruik ik nu', stopped: 'Gestopt',
+      empty: 'Nog geen supplementen of vitamines toegevoegd.', icsName: 'supplementen-herinneringen.ics', defaults: { form: 'Tablet', kind: 'supplement' },
+      match: (m) => m.kind === 'supplement',
+    },
+  };
+
+  const kindOf = (med) => (med && med.kind === 'supplement' ? 'supplement' : 'med');
+
+  /** Opent het formulier; een object zonder id dient als voorinvulling voor een nieuw item. */
+  function openMed(med, kindKey) {
     const existing = med && med.id ? med : null;
+    const k = KINDS[kindKey || kindOf(med)];
     form.open({
-      title: existing ? 'Medicijn bewerken' : 'Medicijn toevoegen',
-      fields: FIELDS,
-      values: med || { active: true, startDate: todayISO(), form: 'Tablet', unitsPerDose: 1 },
+      title: `${k.noun} ${existing ? 'bewerken' : 'toevoegen'}`,
+      fields: k.fields,
+      values: med || Object.assign({ active: true, startDate: todayISO(), unitsPerDose: 1 }, k.defaults),
       onSubmit(values) {
-        store.upsert('medications', Object.assign({}, values, existing ? { id: existing.id } : {}));
-        ui.toast('Medicijn opgeslagen');
+        const kind = kindKey === 'supplement' || (med && med.kind === 'supplement') ? { kind: 'supplement' } : {};
+        store.upsert('medications', Object.assign({}, values, kind, existing ? { id: existing.id } : {}));
+        ui.toast(`${k.noun} opgeslagen`);
       },
       onDelete: existing ? () => store.remove('medications', existing.id) : null,
     });
   }
 
-  /** Lijst van innames voor een dag, gesorteerd op tijd. */
-  function dosesFor(date) {
+  function openSupplement(item) {
+    openMed(item, 'supplement');
+  }
+
+  /** Lijst van innames voor een dag, gesorteerd op tijd. Optioneel alleen medicijnen of alleen supplementen. */
+  function dosesFor(date, match) {
     const doses = [];
     for (const med of store.list('medications')) {
-      if (!isMedActiveOn(med, date)) continue;
+      if (!isMedActiveOn(med, date) || (match && !match(med))) continue;
       for (const time of medTimes(med)) doses.push({ med, time, taken: store.isTaken(date, med.id, time) });
     }
     return sortBy(doses, (d) => d.time + d.med.name);
   }
 
-  function doseListHtml(date) {
-    const doses = dosesFor(date);
+  function doseListHtml(date, match) {
+    const doses = dosesFor(date, match);
     if (!doses.length) return '<p class="muted">Geen vaste innames gepland.</p>';
     const now = date === todayISO() ? utils.nowTime() : null;
     return `<ul class="doses">${doses.map((d) => {
@@ -59,7 +98,7 @@
         <button class="dose-toggle" data-dose="${esc(d.med.id)}|${esc(d.time)}" data-date="${date}" aria-pressed="${d.taken}">
           <span class="check" aria-hidden="true">${d.taken ? '✓' : ''}</span>
           <span class="time">${esc(d.time)}</span>
-          <span class="what"><strong>${esc(d.med.name)}</strong> ${esc(d.med.dose || '')}
+          <span class="what">${d.med.kind === 'supplement' ? '<span aria-label="supplement">🌿 </span>' : ''}<strong>${esc(d.med.name)}</strong> ${esc(d.med.dose || '')}
             ${d.med.unitsPerDose > 1 ? `<span class="muted">(${formatNum(d.med.unitsPerDose)} st.)</span>` : ''}
             ${d.med.instructions ? `<small>${esc(d.med.instructions)}</small>` : ''}</span>
           ${late ? '<span class="late-label">nog niet genomen</span>' : ''}
@@ -90,6 +129,8 @@
         <dl class="kvs">
           ${ui.kv('Waarvoor', med.reason)}
           ${ui.kv('Voorgeschreven door', med.prescriber)}
+          ${ui.kv('Merk', med.brand)}
+          ${ui.kv('Geadviseerd door', med.advisedBy)}
           ${ui.kv('Sinds', formatDate(med.startDate))}
           ${ui.kv('Tot', formatDate(med.endDate))}
           ${ui.kv('Voorraad', med.stock != null ? `${formatNum(med.stock)} st.${left != null ? ` (± ${left} dagen)` : ''}` : '')}
@@ -101,7 +142,7 @@
       </article>`;
   }
 
-  function remindersHtml() {
+  function remindersHtml(k) {
     const r = HT.reminders;
     const on = store.data.settings.notify && r.permission() === 'granted';
     return `<section class="card">
@@ -116,26 +157,31 @@
     </section>`;
   }
 
-  function render(el) {
+  function renderKind(el, kindKey) {
+    const k = KINDS[kindKey];
     const today = todayISO();
-    const meds = sortBy(store.list('medications'), (m) => m.name.toLowerCase());
+    const meds = sortBy(store.list('medications').filter(k.match), (m) => m.name.toLowerCase());
     const active = meds.filter((m) => m.active !== false && (!m.endDate || m.endDate >= today));
     const stopped = meds.filter((m) => !active.includes(m));
 
     el.innerHTML = `
-      ${ui.pageHead('Medicatie', '<button class="btn primary" data-add>+ Medicijn</button>')}
+      ${ui.pageHead(k.title, `<button class="btn primary" data-add>${k.add}</button>`)}
       <section class="card">
         <h2>Vandaag innemen</h2>
-        ${doseListHtml(today)}
+        ${doseListHtml(today, k.match)}
       </section>
-      <h2 class="section-title">Huidige medicatie (${active.length})</h2>
-      ${active.length ? active.map((m) => medCard(m, today)).join('') : ui.empty('Nog geen medicijnen toegevoegd.')}
-      ${active.some((m) => medTimes(m).length) ? remindersHtml() : ''}
-      ${stopped.length ? `<details class="stopped"><summary>Gestopte medicatie (${stopped.length})</summary>${stopped.map((m) => medCard(m, today)).join('')}</details>` : ''}`;
+      <h2 class="section-title">${k.current} (${active.length})</h2>
+      ${active.length ? active.map((m) => medCard(m, today)).join('') : ui.empty(k.empty)}
+      ${active.some((m) => medTimes(m).length) ? remindersHtml(k) : ''}
+      ${kindKey === 'supplement' ? `<section class="card">
+        <h2>Goed om te weten</h2>
+        <p class="muted small">Ook "natuurlijke" middelen kunnen de werking van medicijnen veranderen – bijvoorbeeld sint-janskruid, vitamine K (bij bloedverdunners), ijzer, calcium en magnesium (bij sommige antibiotica en schildkliermedicatie). Vertel je arts en apotheek welke supplementen je gebruikt. Ze staan daarom ook in je <a href="#/overzicht">medisch overzicht</a>.</p>
+      </section>` : ''}
+      ${stopped.length ? `<details class="stopped"><summary>${k.stopped} (${stopped.length})</summary>${stopped.map((m) => medCard(m, today)).join('')}</details>` : ''}`;
 
-    el.querySelector('[data-add]').addEventListener('click', () => openMed());
+    el.querySelector('[data-add]').addEventListener('click', () => openMed(null, kindKey));
     const on = (sel, fn) => { const b = el.querySelector(sel); if (b) b.addEventListener('click', fn); };
-    on('[data-ics-meds]', () => ui.download('medicatie-herinneringen.ics', utils.medsToICS(store.list('medications'), today), 'text/calendar'));
+    on('[data-ics-meds]', () => ui.download(k.icsName, utils.medsToICS(store.list('medications').filter(k.match), today), 'text/calendar'));
     on('[data-notify-on]', () => HT.reminders.enable());
     on('[data-notify-off]', () => HT.reminders.disable());
     on('[data-notify-test]', () => HT.reminders.test());
@@ -143,5 +189,6 @@
     bindDoses(el);
   }
 
-  HT.views.medication = { title: 'Medicatie', render, openMed, doseListHtml, bindDoses, dosesFor };
+  HT.views.medication = { title: 'Medicatie', render: (el) => renderKind(el, 'med'), openMed, doseListHtml, bindDoses, dosesFor, KINDS };
+  HT.views.supplements = { title: 'Supplementen & vitamines', render: (el) => renderKind(el, 'supplement'), openSupplement };
 })(window.HT);

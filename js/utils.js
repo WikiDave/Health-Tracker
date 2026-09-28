@@ -201,7 +201,7 @@
           `DTSTART:${start}T${t}`,
           `DTEND:${start}T${pad(end.getHours())}${pad(end.getMinutes())}00`,
           `RRULE:FREQ=DAILY${med.endDate ? `;UNTIL=${med.endDate.replace(/-/g, '')}T235959` : ''}`,
-          `SUMMARY:${icsEsc(`💊 ${med.name}${med.dose ? ' ' + med.dose : ''}`)}`,
+          `SUMMARY:${icsEsc(`${med.kind === 'supplement' ? '🌿' : '💊'} ${med.name}${med.dose ? ' ' + med.dose : ''}`)}`,
         ];
         if (med.instructions) ev.push(`DESCRIPTION:${icsEsc(med.instructions)}`);
         ev.push('BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc('Tijd voor ' + med.name)}`, 'END:VALARM', 'END:VEVENT');
@@ -337,6 +337,22 @@
     return { withIt: avg(withIt), without: avg(without), n: withIt.length + without.length };
   }
 
+  /** Totaal gedronken (ml) op een dag: uit de drinklog, of anders uit het oude aantal glazen (250 ml). */
+  function fluidMl(c) {
+    if (!c) return null;
+    if (Array.isArray(c.drinks) && c.drinks.length) return c.drinks.reduce((s, d) => s + (parseNum(d.ml) || 0), 0);
+    const glasses = parseNum(c.water);
+    return glasses == null ? null : Math.round(glasses * 250);
+  }
+
+  /** Hoeveel je 'volgens schema' rond dit tijdstip gedronken zou hebben, verdeeld over 08:00–22:00. */
+  function expectedFluid(goalMl, nowHHMM) {
+    const start = 8 * 60;
+    const end = 22 * 60;
+    const t = Math.min(end, Math.max(start, minutesOf(nowHHMM)));
+    return Math.round((goalMl * (t - start)) / (end - start));
+  }
+
   /** Stoelgang-overzicht over een periode (inclusief). */
   function bowelStats(entries, fromISO, toISOStr) {
     const list = entries.filter((e) => e.date >= fromISO && e.date <= toISOStr);
@@ -368,13 +384,13 @@
     formatDate, formatDateLong, formatDateShort,
     escapeHtml, uid, parseNum, formatNum, parseTimes,
     rangeStatus, isMedActiveOn, medTimes, daysOfStockLeft, doseKey, adherence,
-    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, weekStart, activeMinutesByWeek, bowelStats, sumByWeek, daysSince, nextDayEffect, sleepDuration, sameDayEffect, sortBy,
+    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, weekStart, activeMinutesByWeek, bowelStats, sumByWeek, daysSince, nextDayEffect, sleepDuration, sameDayEffect, fluidMl, expectedFluid, sortBy,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else {
     root.HT = root.HT || {};
     root.HT.utils = api;
-    root.HT.version = '6'; // gelijk houden met VERSION in sw.js
+    root.HT.version = '7'; // gelijk houden met VERSION in sw.js
   }
 })(typeof window !== 'undefined' ? window : globalThis);
