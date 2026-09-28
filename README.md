@@ -15,6 +15,15 @@ Een app om je gezondheid bij te houden, op je telefoon of computer.
 
 Op de telefoon staat het menu als balk onderin. Een groep opent een pagina met tegels (met de stand van vandaag); binnen een groep wissel je via de knoppen bovenaan.
 
+## Gezondheidsmeter
+
+Op het startscherm staat een meter van 0 tot 100 met een label (*Goed*, *Redelijk*, *Matig*, *Aandacht nodig*). Tik erop voor **waarom**: wat goed gaat, aandachtspunten, tips en een score per onderdeel.
+
+- De meter gebruikt vaste, transparante regels op basis van Nederlandse adviezen: slaap (15%), beweging (15%), voeding & drinken (10%), mentaal (15%), lichamelijk (15%), middelen (10%), medicijntrouw (10%) en metingen (10%).
+- Hij kijkt naar de afgelopen 7 dagen (metingen: 30 dagen). Onderdelen zonder gegevens tellen niet mee, en de meter toont hoe betrouwbaar de score is.
+- Zorgwekkende signalen (bijvoorbeeld bloed bij de ontlasting, zeer hoge bloeddruk, hoge koorts, lage saturatie) staan apart onder *Let op*, met het advies om contact op te nemen met je huisarts.
+- Het is een indicatie, geen diagnose.
+
 ## Onderdelen
 
 | Onderdeel | Wat kun je ermee |

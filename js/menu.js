@@ -67,6 +67,7 @@
   /** De hoofdmenu-knop die actief moet zijn voor deze route. */
   function topRouteOf(route) {
     if (PROFILE_ROUTES.includes(route)) return 'profiel';
+    if (route === 'meter') return '';
     const g = groupOf(route);
     return g ? g.route : route;
   }
