@@ -114,6 +114,45 @@ p { margin: .4rem 0; }
 .tile-text { font-size: .82rem; color: var(--muted); }
 .tile-status { margin-top: auto; padding-top: 6px; font-size: .82rem; font-weight: 600; color: var(--primary); }
 
+/* Gezondheidsmeter */
+.gauge { display: block; margin: 0 auto; max-width: 100%; }
+.gauge-track { fill: none; stroke: var(--surface-2); stroke-width: 16; stroke-linecap: round; }
+.gauge-value { fill: none; stroke-width: 16; stroke-linecap: round; }
+.gauge-value.good { stroke: var(--good); }
+.gauge-value.warn { stroke: var(--warn); }
+.gauge-value.bad { stroke: var(--bad); }
+.gauge-score { font-size: 40px; font-weight: 700; fill: var(--text); font-variant-numeric: tabular-nums; }
+.gauge-max { font-size: 11px; fill: var(--muted); }
+.meter-main { text-align: center; }
+.meter-label { margin: 4px 0; }
+.meter-label .badge { font-size: 1rem; padding: 4px 14px; }
+.meter-link { display: block; color: var(--text); text-decoration: none; }
+.meter-link:hover { background: var(--surface-2); }
+.meter-row { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; }
+.meter-row h2 { margin: 0 0 4px; }
+.meter-row p { margin: 2px 0; }
+.link-text { color: var(--primary); font-weight: 600; }
+.meter-flag { color: var(--bad); font-weight: 600; margin: 8px 0 0; }
+.reasons { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.reasons li { display: grid; grid-template-columns: 22px 1fr; gap: 6px; align-items: start; }
+.reason-icon { font-weight: 700; text-align: center; border-radius: 50%; width: 22px; height: 22px; line-height: 22px; font-size: .8rem; }
+.reasons.good .reason-icon { background: var(--good-bg); color: var(--good); }
+.reasons.bad .reason-icon { background: var(--warn-bg); color: var(--warn); }
+.reason-link { font-size: .78rem; white-space: nowrap; margin-left: 4px; }
+.domain-list { display: grid; gap: 4px; }
+.domain summary { display: grid; grid-template-columns: minmax(130px, 38%) 1fr 32px; gap: 10px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; }
+.domain summary::-webkit-details-marker { display: none; }
+.domain summary::after { content: none; }
+.domain + .domain { border-top: 1px solid var(--border); }
+.domain-name { font-weight: 600; }
+.domain-score { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bar-fill.good { background: var(--good); }
+.bar-fill.warn { background: var(--warn); }
+.bar-fill.bad { background: var(--bad); }
+.domain-body { padding: 4px 0 10px; font-size: .92rem; }
+.domain-body p { margin: 4px 0; }
+@media (max-width: 420px) { .meter-row { grid-template-columns: 1fr; text-align: center; } }
+
 /* Telefoon: hoofdmenu als vaste balk onderin */
 @media (max-width: 640px) {
   .nav {

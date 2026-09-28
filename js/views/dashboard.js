@@ -73,6 +73,8 @@
         ${quit ? `<p>${ui.badge(`🚭 ${quit.days} dagen rookvrij`, 'good')}</p>` : ''}
       </div>
 
+      ${isEmpty ? '' : views.healthmeter.cardHtml()}
+
       ${isEmpty ? `<section class="card welcome">
         <h2>Welkom bij je Gezondheidsapp 👋</h2>
         <p>Hier houd je alles over je gezondheid bij op één plek. Je gegevens blijven <strong>alleen op dit apparaat</strong>.</p>
@@ -82,6 +84,7 @@
           <li>Leg je <a href="#/bloed">bloeduitslagen</a>, <a href="#/recepten">voorschriften</a> en <a href="#/bezoeken">afspraken</a> vast.</li>
           <li>Doe elke dag de <a href="#/check">dagelijkse check</a> (ook vermoeidheid en hoe je je mentaal voelt), en noteer pijn in je <a href="#/pijn">pijndagboek</a>.</li>
           <li>Zet <a href="#/medicatie">herinneringen</a> aan zodat je je medicijnen niet vergeet.</li>
+          <li>Na een paar dagen invullen zie je hier je <a href="#/meter">gezondheidsmeter</a>: hoe gezond je leeft en waarom.</li>
         </ol>
       </section>` : ''}
 
