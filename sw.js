@@ -1,5 +1,5 @@
 /* Service worker: maakt de app offline bruikbaar. Verhoog VERSION bij elke release. */
-const VERSION = 'v9';
+const VERSION = 'v10';
 const CACHE = `gezondheid-${VERSION}`;
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/styles.css',

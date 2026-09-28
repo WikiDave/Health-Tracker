@@ -73,7 +73,7 @@
         ${quit ? `<p>${ui.badge(`🚭 ${quit.days} dagen rookvrij`, 'good')}</p>` : ''}
       </div>
 
-      ${isEmpty ? '' : views.healthmeter.cardHtml()}
+      ${views.healthmeter.cardHtml()}
 
       ${isEmpty ? `<section class="card welcome">
         <h2>Welkom bij je Gezondheidsapp 👋</h2>
