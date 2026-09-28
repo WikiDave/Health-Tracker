@@ -274,6 +274,69 @@
     return out;
   }
 
+  /** Som van een numeriek veld per week (maandag als sleutel). */
+  function sumByWeek(entries, key) {
+    const out = {};
+    for (const e of entries) {
+      const v = parseNum(e[key]);
+      if (!e.date || v == null) continue;
+      const k = weekStart(e.date);
+      out[k] = (out[k] || 0) + v;
+    }
+    return out;
+  }
+
+  /** Aantal hele dagen sinds een datum (0 op de dag zelf), of null. */
+  function daysSince(iso, today) {
+    if (!iso) return null;
+    const n = daysBetween(iso, today);
+    return n < 0 ? null : n;
+  }
+
+  /**
+   * Vergelijkt een waarde uit de check van de dag erna, na dagen met en zonder gebruik.
+   * bv. vermoeidheid de ochtend na dagen met alcohol vs zonder. Geeft null bij te weinig gegevens (min. 3 per groep).
+   */
+  function nextDayEffect(dayEntries, usedFn, checkins, key) {
+    const byDate = Object.fromEntries(checkins.map((c) => [c.date, c]));
+    const withUse = [];
+    const without = [];
+    for (const e of dayEntries) {
+      const next = byDate[addDays(e.date, 1)];
+      const v = next ? parseNum(next[key]) : null;
+      if (v == null) continue;
+      (usedFn(e) ? withUse : without).push(v);
+    }
+    if (withUse.length < 3 || without.length < 3) return null;
+    const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+    return { withUse: avg(withUse), without: avg(without), n: withUse.length + without.length };
+  }
+
+  /** Slaapduur in uren tussen bedtijd en opstaan (over middernacht heen), minus inslaaptijd. */
+  function sleepDuration(bedtime, wakeTime, minutesToFallAsleep) {
+    if (!bedtime || !wakeTime) return null;
+    let mins = minutesOf(wakeTime) - minutesOf(bedtime);
+    if (mins <= 0) mins += 24 * 60;
+    mins -= parseNum(minutesToFallAsleep) || 0;
+    return mins > 0 ? Math.round((mins / 60) * 10) / 10 : null;
+  }
+
+  /** Vergelijkt een waarde op dagen met en zonder een bepaalde situatie (zelfde dag). Min. 3 per groep. */
+  function sameDayEffect(checkins, conditionFn, key) {
+    const withIt = [];
+    const without = [];
+    for (const c of checkins) {
+      const v = parseNum(c[key]);
+      if (v == null) continue;
+      const cond = conditionFn(c);
+      if (cond == null) continue;
+      (cond ? withIt : without).push(v);
+    }
+    if (withIt.length < 3 || without.length < 3) return null;
+    const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+    return { withIt: avg(withIt), without: avg(without), n: withIt.length + without.length };
+  }
+
   /** Stoelgang-overzicht over een periode (inclusief). */
   function bowelStats(entries, fromISO, toISOStr) {
     const list = entries.filter((e) => e.date >= fromISO && e.date <= toISOStr);
@@ -305,7 +368,7 @@
     formatDate, formatDateLong, formatDateShort,
     escapeHtml, uid, parseNum, formatNum, parseTimes,
     rangeStatus, isMedActiveOn, medTimes, daysOfStockLeft, doseKey, adherence,
-    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, weekStart, activeMinutesByWeek, bowelStats, sortBy,
+    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, weekStart, activeMinutesByWeek, bowelStats, sumByWeek, daysSince, nextDayEffect, sleepDuration, sameDayEffect, sortBy,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

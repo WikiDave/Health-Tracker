@@ -56,19 +56,21 @@
   function render(el) {
     const today = todayISO();
     const name = store.data.profile.name ? `, ${store.data.profile.name.split(' ')[0]}` : '';
-    const checkin = store.checkinFor(today);
+    const checkin = store.checkinDone(today) ? store.checkinFor(today) : null;
     const doses = views.medication.dosesFor(today);
     const taken = doses.filter((d) => d.taken).length;
     const week = adherence(store.list('medications'), store.data.medLog, addDays(today, -6), today, utils.nowTime());
     const upcoming = sortBy(store.list('visits').filter((v) => v.date >= today), (v) => v.date + (v.time || '')).slice(0, 3);
     const warn = alerts(today);
-    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain', 'sport', 'bowel'].some((c) => store.list(c).length);
+    const quit = views.substances.quitStats(today);
+    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain', 'sport', 'bowel', 'food'].some((c) => store.list(c).length);
     const painToday = store.list('pain').filter((e) => e.date === today);
 
     el.innerHTML = `
       <div class="hero">
         <h1>${greeting()}${esc(name)}</h1>
         <p class="muted">${esc(formatDateLong(today))}</p>
+        ${quit ? `<p>${ui.badge(`🚭 ${quit.days} dagen rookvrij`, 'good')}</p>` : ''}
       </div>
 
       ${isEmpty ? `<section class="card welcome">
@@ -95,6 +97,10 @@
             <button class="btn small ghost" data-pain>⚡ Pijn</button>
             <button class="btn small ghost" data-sport>🏃 Sport</button>
             <button class="btn small ghost" data-bowel>🚽 Stoelgang</button>
+            <button class="btn small ghost" data-food>🥗 Eten</button>
+            <button class="btn small ghost" data-sleep>🌙 Slaap</button>
+            <button class="btn small ghost" data-subst>🍷 Middelen</button>
+            <button class="btn small ghost" data-env>🌳 Omgeving</button>
           </div>
           ${painToday.length ? `<p class="muted">Vandaag ${painToday.length}× pijn genoteerd (hoogste ${Math.max(...painToday.map((e) => e.intensity))}/10) · <a href="#/pijn">bekijk</a></p>` : ''}
         </section>
@@ -132,6 +138,10 @@
     el.querySelector('[data-pain]').addEventListener('click', () => views.pain.openPain());
     el.querySelector('[data-sport]').addEventListener('click', () => views.sport.openSport());
     el.querySelector('[data-bowel]').addEventListener('click', () => views.bowel.openBowel());
+    el.querySelector('[data-food]').addEventListener('click', () => views.nutrition.openFood());
+    el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
+    el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
+    el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));
     views.medication.bindDoses(el);
   }
 

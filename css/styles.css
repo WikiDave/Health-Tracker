@@ -284,9 +284,10 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
 .result-row input { padding: 7px 8px; min-height: 38px; }
 @media (max-width: 520px) {
   .results-head { display: none; }
-  .result-row { grid-template-columns: 1fr 1fr 1fr 36px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-  .result-row [data-k="name"] { grid-column: 1 / 4; }
-  .result-row [data-remove-row] { grid-column: 4; grid-row: 1; }
+  .result-row { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .result-row:not(.custom) { grid-template-columns: 1fr 1fr 1fr 36px; }
+  .result-row:not(.custom) [data-k="name"] { grid-column: 1 / 4; }
+  .result-row:not(.custom) [data-remove-row] { grid-column: 4; grid-row: 1; }
 }
 
 .toast {
@@ -329,6 +330,13 @@ details summary { cursor: pointer; }
 .bar-track { height: 12px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
 .bar-fill { display: block; height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; }
 .bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); }
+
+/* Voedingsdoelen */
+.goals { display: grid; gap: 10px; margin: 6px 0 8px; }
+.goal-head { display: flex; justify-content: space-between; gap: 8px; font-size: .92rem; }
+.goal .progress { margin: 4px 0 0; }
+.check-inline { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: .92rem; }
+.check-inline input { width: 20px; height: 20px; min-height: 0; }
 
 /* Afdrukken (medisch overzicht) */
 @media print {

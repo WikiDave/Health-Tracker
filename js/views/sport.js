@@ -52,10 +52,12 @@
     const current = weeks[weekStart(today)] || 0;
 
     // Laatste 12 weken voor de grafiek (ook weken zonder beweging)
+    // Beweegminuten per week, vanaf de eerste week met gegevens (max. 12 weken terug).
     const points = [];
+    const firstWeek = Object.keys(weeks).sort()[0];
     for (let i = 11; i >= 0; i--) {
       const wk = weekStart(addDays(today, -7 * i));
-      if (all.length) points.push({ date: wk, value: weeks[wk] || 0 });
+      if (firstWeek && wk >= firstWeek) points.push({ date: wk, value: weeks[wk] || 0 });
     }
 
     const last30 = all.filter((e) => e.date >= addDays(today, -29));

@@ -54,6 +54,8 @@
     const pad = (yMax - yMin) * 0.12 || Math.abs(yMax) * 0.1 || 1;
     yMin -= pad;
     yMax += pad;
+    // Geen negatieve as als alle waarden 0 of hoger zijn (bv. aantallen).
+    if (Math.min(...values) >= 0) yMin = Math.max(0, yMin);
     const ticks = niceTicks(yMin, yMax, 4);
     yMin = Math.min(yMin, ticks[0]);
     yMax = Math.max(yMax, ticks[ticks.length - 1]);

@@ -1,6 +1,7 @@
 /* Algemene formulier-dialoog. Een formulier wordt beschreven met een lijst velden:
  *   { name, label, type, options, placeholder, required, half, help, list, min, max, step }
- * Types: text, number, date, time, textarea, select, checkbox, scale, choice, times, results, heading. */
+ * Types: text, number, date, time, textarea, select, checkbox, scale, choice, times, results, heading.
+ * 'results' is een lijst regels; standaard labuitslagen, of eigen kolommen via f.columns = [{k, label, placeholder, list, num}]. */
 (function (HT) {
   'use strict';
   const { escapeHtml: esc, parseNum, parseTimes, formatNum, uid } = HT.utils;
@@ -17,14 +18,22 @@
     return a;
   }
 
-  function resultRow(r) {
+  const LAB_COLUMNS = [
+    { k: 'name', label: 'Bepaling', placeholder: 'Bepaling (bv. Hemoglobine)', list: 'lab-names' },
+    { k: 'value', label: 'Uitslag', placeholder: 'Uitslag', num: true },
+    { k: 'unit', label: 'Eenheid', placeholder: 'Eenheid' },
+    { k: 'low', label: 'Min', placeholder: 'Min', num: true },
+    { k: 'high', label: 'Max', placeholder: 'Max', num: true },
+  ];
+
+  const columnsOf = (f) => f.columns || LAB_COLUMNS;
+
+  function resultRow(f, r) {
     r = r || {};
-    return `<div class="result-row" data-row>
-      <input data-k="name" placeholder="Bepaling (bv. Hemoglobine)" list="lab-names" value="${esc(r.name)}" aria-label="Bepaling">
-      <input data-k="value" inputmode="decimal" placeholder="Uitslag" value="${esc(formatNum(r.value))}" aria-label="Uitslag">
-      <input data-k="unit" placeholder="Eenheid" value="${esc(r.unit)}" aria-label="Eenheid">
-      <input data-k="low" inputmode="decimal" placeholder="Min" value="${esc(formatNum(r.low))}" aria-label="Referentie minimum">
-      <input data-k="high" inputmode="decimal" placeholder="Max" value="${esc(formatNum(r.high))}" aria-label="Referentie maximum">
+    const cols = columnsOf(f);
+    return `<div class="result-row${f.columns ? ' custom' : ''}" data-row style="${f.columns ? `grid-template-columns: 2fr repeat(${cols.length - 1}, 1fr) 36px` : ''}">
+      ${cols.map((c) => `<input data-k="${c.k}"${c.num ? ' inputmode="decimal"' : ''}${c.list ? ` list="${esc(c.list)}"` : ''} placeholder="${esc(c.placeholder || c.label)}"
+        value="${esc(c.num ? formatNum(r[c.k]) : r[c.k])}" aria-label="${esc(c.label)}">`).join('')}
       <button type="button" class="icon-btn" data-remove-row aria-label="Regel verwijderen">✕</button>
     </div>`;
   }
@@ -64,11 +73,13 @@
       case 'times':
         return `<div class="${cls}">${label}<input id="${id}" name="${f.name}" value="${esc(Array.isArray(v) ? v.join(', ') : v)}"${attrs(f)}>${help}</div>`;
       case 'results': {
-        const rows = (Array.isArray(v) && v.length ? v : [null, null, null]).map(resultRow).join('');
+        const cols = columnsOf(f);
+        const empty = Array(f.emptyRows || 3).fill(null);
+        const rows = (Array.isArray(v) && v.length ? v : empty).map((r) => resultRow(f, r)).join('');
         return `<div class="field full"><span class="label">${esc(f.label)}</span>
-          <div class="results-head"><span>Bepaling</span><span>Uitslag</span><span>Eenheid</span><span>Min</span><span>Max</span><span></span></div>
-          <div class="results" data-results>${rows}</div>
-          <button type="button" class="btn small ghost" data-add-row>+ Regel toevoegen</button>${help}</div>`;
+          <div class="results-head" style="${f.columns ? `grid-template-columns: 2fr repeat(${cols.length - 1}, 1fr) 36px` : ''}">${cols.map((c) => `<span>${esc(c.label)}</span>`).join('')}<span></span></div>
+          <div class="results" data-results="${esc(f.name)}">${rows}</div>
+          <button type="button" class="btn small ghost" data-add-row="${esc(f.name)}">+ Regel toevoegen</button>${help}</div>`;
       }
       case 'number':
         return `<div class="${cls}">${label}<input id="${id}" name="${f.name}" inputmode="decimal" value="${esc(formatNum(v))}"${attrs(f)}>${help}</div>`;
@@ -88,16 +99,19 @@
         continue;
       }
       if (f.type === 'results') {
-        out[f.name] = [...form.querySelectorAll('[data-row]')]
+        const cols = columnsOf(f);
+        const numeric = new Set(cols.filter((c) => c.num).map((c) => c.k));
+        out[f.name] = [...form.querySelectorAll(`[data-results="${f.name}"] [data-row]`)]
           .map((row) => {
             const r = { id: uid() };
             row.querySelectorAll('[data-k]').forEach((inp) => {
               const k = inp.dataset.k;
-              r[k] = ['value', 'low', 'high'].includes(k) ? parseNum(inp.value) : inp.value.trim();
+              r[k] = numeric.has(k) ? parseNum(inp.value) : inp.value.trim();
             });
             return r;
           })
-          .filter((r) => r.name && r.value != null);
+          // Labuitslagen: naam + waarde verplicht; eigen kolommen: eerste kolom ingevuld.
+          .filter((r) => (f.columns ? r[cols[0].k] : r.name && r.value != null));
         continue;
       }
       const el = form.elements[f.name];
@@ -146,9 +160,12 @@
 
     form.addEventListener('click', (e) => {
       if (e.target.closest('[data-close]')) dialog.close();
-      if (e.target.closest('[data-add-row]')) {
-        form.querySelector('[data-results]').insertAdjacentHTML('beforeend', resultRow());
-        const rows = form.querySelectorAll('[data-row]');
+      const add = e.target.closest('[data-add-row]');
+      if (add) {
+        const f = opts.fields.find((x) => x.name === add.dataset.addRow);
+        const box = form.querySelector(`[data-results="${f.name}"]`);
+        box.insertAdjacentHTML('beforeend', resultRow(f));
+        const rows = box.querySelectorAll('[data-row]');
         rows[rows.length - 1].querySelector('input').focus();
       }
       const rm = e.target.closest('[data-remove-row]');

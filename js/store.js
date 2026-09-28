@@ -4,7 +4,7 @@
   const { uid, doseKey, parseNum } = HT.utils;
 
   const KEY = 'health-tracker-v1';
-  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel'];
+  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel', 'food'];
 
   function empty() {
     return {
@@ -21,6 +21,7 @@
       questionnaires: [],
       sport: [],
       bowel: [],
+      food: [],
       settings: {},
     };
   }
@@ -107,6 +108,19 @@
 
     checkinFor(date) {
       return data.checkins.find((c) => c.date === date);
+    },
+
+    /** Vult velden aan in het dagrecord (maakt het aan als het nog niet bestaat). Gebruikt door slaap, voeding, middelen en omgeving. */
+    mergeCheckin(date, values) {
+      const existing = store.checkinFor(date);
+      return store.upsert('checkins', Object.assign({}, existing || { date }, values, { date }));
+    },
+
+    /** Is de dagelijkse check (het hoofdformulier) voor deze dag ingevuld? */
+    checkinDone(date) {
+      const c = store.checkinFor(date);
+      if (!c) return false;
+      return Boolean(c.completed) || ['mood', 'energy', 'pain', 'fatigue', 'stress', 'systolic', 'weight', 'symptoms'].some((k) => c[k] != null && c[k] !== '');
     },
 
     isTaken(date, medId, time) {

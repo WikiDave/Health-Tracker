@@ -81,7 +81,7 @@
     date = date || todayISO();
     const existing = store.checkinFor(date);
     form.open({
-      title: existing ? 'Dagelijkse check bewerken' : 'Dagelijkse check',
+      title: store.checkinDone(date) ? 'Dagelijkse check bewerken' : 'Dagelijkse check',
       fields: FIELDS,
       values: existing || { date },
       onSubmit(values) {
@@ -89,10 +89,32 @@
         if (other && (!existing || other.id !== existing.id)) {
           return `Er is al een check voor ${formatDateLong(values.date)}. Bewerk die in de geschiedenis.`;
         }
-        store.upsert('checkins', Object.assign({}, values, existing ? { id: existing.id } : {}));
+        store.upsert('checkins', Object.assign({}, values, { completed: true }, existing ? { id: existing.id } : {}));
         ui.toast('Check opgeslagen');
       },
-      onDelete: existing ? () => store.remove('checkins', existing.id) : null,
+      onDelete: existing ? () => {
+        if (confirm('Hiermee verwijder je álles van deze dag (ook slaap, voeding, middelen en omgeving). Doorgaan?')) store.remove('checkins', existing.id);
+      } : null,
+    });
+  }
+
+  /**
+   * Formulier voor één onderdeel van een dag (slaap, voeding, middelen, omgeving).
+   * Leest en schrijft dezelfde dagrecord als de dagelijkse check; andere velden blijven ongemoeid.
+   */
+  function openDayPart({ title, fields, date, toastText, prepare }) {
+    date = date || todayISO();
+    const existing = store.checkinFor(date) || {};
+    form.open({
+      title,
+      fields: [{ name: 'date', label: 'Datum', type: 'date', required: true, half: true }, ...fields],
+      values: Object.assign({}, existing, { date }),
+      onSubmit(values) {
+        const out = prepare ? prepare(values) : values;
+        if (typeof out === 'string') return out;
+        store.mergeCheckin(values.date, out);
+        ui.toast(toastText || 'Opgeslagen');
+      },
     });
   }
 
@@ -108,7 +130,17 @@
     if (c.focus) parts.push(`${FOCUS[c.focus - 1]} concentratie ${c.focus}/5`);
     if (c.libido) parts.push(`libido ${c.libido}/5`);
     if (c.steps) parts.push(`${Number(c.steps).toLocaleString('nl-NL')} stappen`);
-    if (c.sleepHours != null) parts.push(`${formatNum(c.sleepHours)} u slaap`);
+    if (c.sleepHours != null) parts.push(`😴 ${formatNum(c.sleepHours)} u slaap${c.bedtime && c.wakeTime ? ` (${c.bedtime}–${c.wakeTime})` : ''}`);
+    if (c.veg) parts.push(`🥦 ${formatNum(c.veg)} g groente`);
+    if (c.fruit) parts.push(`🍎 ${formatNum(c.fruit)} fruit`);
+    if (c.water) parts.push(`💧 ${formatNum(c.water)} glazen`);
+    if (c.alcohol) parts.push(`🍷 ${formatNum(c.alcohol)} glas alcohol`);
+    if (c.cigarettes) parts.push(`🚬 ${formatNum(c.cigarettes)} sigaretten`);
+    if (c.coffee) parts.push(`☕ ${formatNum(c.coffee)} koffie`);
+    if (Array.isArray(c.drugs) && c.drugs.length) parts.push(`💊 ${c.drugs.map((d) => d.name).join(', ')}`);
+    if (c.work && c.work !== 'Niet gewerkt') parts.push(`💼 ${c.work.toLowerCase()}${c.workHours ? ` ${formatNum(c.workHours)} u` : ''}`);
+    if (c.outsideMinutes) parts.push(`🌳 ${formatNum(c.outsideMinutes)} min buiten`);
+    if (c.party) parts.push('🎉 feest / uitgaan');
     if (c.systolic && c.diastolic) parts.push(`${c.systolic}/${c.diastolic} mmHg`);
     if (c.heartRate) parts.push(`${c.heartRate} bpm`);
     if (c.weight) parts.push(`${formatNum(c.weight)} kg`);
@@ -133,7 +165,7 @@
 
   function render(el) {
     const today = todayISO();
-    const todays = store.checkinFor(today);
+    const todays = store.checkinDone(today);
     const from = period ? addDays(today, -period + 1) : '0000';
     const inRange = store.list('checkins').filter((c) => c.date >= from);
     const history = sortBy(store.list('checkins'), 'date', -1);
@@ -188,5 +220,5 @@
     el.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openCheckin(b.dataset.edit)));
   }
 
-  HT.views.checkin = { title: 'Dagelijkse check', render, openCheckin, summaryHtml, METRICS };
+  HT.views.checkin = { title: 'Dagelijkse check', render, openCheckin, openDayPart, summaryHtml, METRICS };
 })(window.HT);
