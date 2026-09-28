@@ -246,6 +246,15 @@
     return out;
   }
 
+  /** Gemiddelde van een veld over de checks tussen twee datums (inclusief). */
+  function average(checkins, key, fromISO, toISOStr) {
+    const vals = checkins
+      .filter((c) => c.date >= fromISO && c.date <= toISOStr && c[key] != null && c[key] !== '')
+      .map((c) => Number(c[key]))
+      .filter(Number.isFinite);
+    return vals.length ? { avg: vals.reduce((a, b) => a + b, 0) / vals.length, n: vals.length } : null;
+  }
+
   function sortBy(arr, key, dir = 1) {
     return [...arr].sort((a, b) => {
       const av = typeof key === 'function' ? key(a) : a[key];
@@ -259,7 +268,7 @@
     formatDate, formatDateLong, formatDateShort,
     escapeHtml, uid, parseNum, formatNum, parseTimes,
     rangeStatus, isMedActiveOn, medTimes, daysOfStockLeft, doseKey, adherence,
-    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, sortBy,
+    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, sortBy,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

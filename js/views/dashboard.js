@@ -32,6 +32,16 @@
     for (const d of utils.vaccinationsDue(store.list('vaccinations'), today)) {
       out.push({ kind: d.status === 'overdue' ? 'bad' : 'warn', text: views.vaccinations.dueText(d), href: '#/vaccinaties' });
     }
+    for (const c of views.wellbeing.latestConcern(today)) {
+      const name = HT.questionnaires.QUESTIONNAIRES[c.type].short;
+      out.push({
+        kind: c.result.selfHarm ? 'bad' : 'warn',
+        text: c.result.selfHarm
+          ? `${name} op ${formatDate(c.date)}: je gaf aan gedachten te hebben over de dood of jezelf iets aandoen. Praat erover met je huisarts of 113 (0800-0113).`
+          : `${name} op ${formatDate(c.date)}: score ${c.result.score} (${c.result.level.toLowerCase()}). Bespreek dit met je huisarts.`,
+        href: '#/welzijn',
+      });
+    }
     const lastLab = sortBy(store.list('labs'), 'date', -1)[0];
     if (lastLab) {
       const out1 = (lastLab.results || []).filter((r) => ['low', 'high'].includes(rangeStatus(r.value, r.low, r.high)));
@@ -67,7 +77,7 @@
           <li>Vul je <a href="#/profiel">profiel</a> in (allergieën, huisarts, noodcontact).</li>
           <li>Voeg je <a href="#/medicatie">medicijnen</a> toe met de tijden waarop je ze inneemt.</li>
           <li>Leg je <a href="#/bloed">bloeduitslagen</a>, <a href="#/recepten">voorschriften</a> en <a href="#/bezoeken">afspraken</a> vast.</li>
-          <li>Doe elke dag de <a href="#/check">dagelijkse check</a>, en noteer pijn in je <a href="#/pijn">pijndagboek</a>.</li>
+          <li>Doe elke dag de <a href="#/check">dagelijkse check</a> (ook vermoeidheid en hoe je je mentaal voelt), en noteer pijn in je <a href="#/pijn">pijndagboek</a>.</li>
           <li>Zet <a href="#/medicatie">herinneringen</a> aan zodat je je medicijnen niet vergeet.</li>
         </ol>
       </section>` : ''}

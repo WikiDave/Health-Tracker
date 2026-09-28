@@ -6,6 +6,7 @@
   const ROUTES = {
     '': views.dashboard,
     check: views.checkin,
+    welzijn: views.wellbeing,
     medicatie: views.medication,
     pijn: views.pain,
     bloed: views.labs,

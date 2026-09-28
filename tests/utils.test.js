@@ -115,3 +115,14 @@ test('adherence telt innames later vandaag nog niet mee', () => {
   const log = { '2026-09-28': { 'a|08:00': 't', 'a|20:00': 't' } };
   assert.deepEqual(u.adherence(meds, log, '2026-09-28', '2026-09-28', '07:00'), { planned: 2, taken: 2, pct: 100 });
 });
+
+test('average rekent gemiddelde binnen periode en negeert lege waarden', () => {
+  const c = [
+    { date: '2026-09-20', fatigue: 8 },
+    { date: '2026-09-25', fatigue: 4 },
+    { date: '2026-09-26', fatigue: null },
+    { date: '2026-09-27', fatigue: 6 },
+  ];
+  assert.deepEqual(u.average(c, 'fatigue', '2026-09-21', '2026-09-27'), { avg: 5, n: 2 });
+  assert.equal(u.average(c, 'stress', '2026-09-01', '2026-09-30'), null);
+});

@@ -46,11 +46,22 @@
       },
       {
         name: 'Dagelijkse check',
-        columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
+        columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Vermoeidheid (0-10)', 'Impact vermoeidheid', 'Uitgerust wakker (1-5)', 'Rust / dutjes',
+          'Stress (0-10)', 'Angst (0-10)', 'Somberheid (0-10)', 'Concentratie (1-5)', 'Hield me bezig', 'Iets fijns',
+          'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
         rows: sortBy(data.checkins, 'date', -1).map((c) => [
-          d(c.date), c.mood, c.energy, c.pain, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
+          d(c.date), c.mood, c.energy, c.pain, c.fatigue, c.fatigueImpact, c.restedWaking, c.restBreaks,
+          c.stress, c.anxiety, c.gloom, c.focus, c.mentalNotes, c.positive, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
           c.weight, c.temperature, c.glucose, c.oxygen, c.water, c.symptoms, c.notes,
         ]),
+      },
+      {
+        name: 'Zelftests',
+        columns: ['Datum', 'Vragenlijst', 'Score', 'Maximum', 'Niveau', ...Array.from({ length: 9 }, (_, i) => `Vraag ${i + 1} (0-3)`)],
+        rows: sortBy(data.questionnaires, 'date', -1).map((r) => {
+          const q = HT.questionnaires.QUESTIONNAIRES[r.type];
+          return [d(r.date), q ? q.short : r.type, r.score, q ? q.max : '', r.level, ...(r.answers || [])];
+        }),
       },
       {
         name: 'Pijndagboek',

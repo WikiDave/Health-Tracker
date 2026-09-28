@@ -6,6 +6,7 @@ Een app om je gezondheid bij te houden, op je telefoon of computer.
 |---|---|
 | 🏠 **Vandaag** | Overzicht van de dag: je dagelijkse check, welke medicijnen je nog moet innemen, aandachtspunten (bijna op, recept verloopt, afwijkende bloedwaarden) en je komende afspraken. |
 | 📝 **Dagelijkse check** | Stemming, energie, pijn, slaap, bloeddruk, hartslag, gewicht, temperatuur, bloedsuiker, saturatie, klachten en notities. Met grafieken van het verloop. |
+| 🧠 **Vermoeidheid & mentaal** | In de dagelijkse check houd je vermoeidheid (0–10, wat je nog kon, rust/dutjes, uitgerust wakker) en je mentale gezondheid bij (stress, angst, somberheid, concentratie, wat je bezighield, iets fijns). Het scherm *Welzijn* toont weekgemiddelden met vergelijking, grafieken, een dagboek en zelftests (PHQ-9 voor somberheid, GAD-7 voor angst) met uitleg en hulp-informatie. |
 | 💊 **Medicatie** | Medicijnen met dosis, innametijden en gebruiksaanwijzing. Innames afvinken, voorraad telt automatisch af (waarschuwing bij minder dan 7 dagen), en je ziet hoe trouw je ze inneemt. Vergeten innames worden gemarkeerd. |
 | 🔔 **Herinneringen** | Zet al je innametijden met één klik in de agenda van je telefoon (dagelijks terugkerend, met melding). Daarnaast kan de app zelf meldingen geven voor medicatie en voor je dagelijkse check. |
 | ⚡ **Pijndagboek** | Noteer pijn wanneer je het voelt: hoe erg (0–10), waar, soort, oorzaak en wat hielp. Met grafiek en overzicht (gemiddelde, hoogste, meest genoemde plek). |
@@ -59,6 +60,7 @@ js/store.js           opslag in localStorage, back-up
 js/xlsx.js            Excel-bestanden maken zonder bibliotheek (ook getest in Node)
 js/export.js          export van alle gegevens naar Excel
 js/reminders.js       meldingen voor medicatie en dagelijkse check
+js/questionnaires.js  PHQ-9 en GAD-7 met scoring (ook getest in Node)
 js/form.js            generieke formulier-dialoog
 js/chart.js           SVG-lijngrafiek met referentieband en tooltip
 js/views/*.js         de schermen
@@ -70,4 +72,4 @@ Bij een nieuwe versie: verhoog `VERSION` in `sw.js`.
 
 ---
 
-*Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112.*
+*Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112. Denk je aan zelfdoding? Bel 113 of gratis 0800-0113 (113 Zelfmoordpreventie, dag en nacht).*

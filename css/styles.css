@@ -295,6 +295,32 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
   white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
 }
 
+/* Formulier: tussenkopjes en keuzevragen */
+.form-section { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+.form-section h3 { margin: 0; font-size: 1rem; color: var(--primary); }
+.form-grid > .form-section:first-of-type { margin-top: 0; }
+fieldset.choice { border: 0; padding: 0; margin: 0; }
+fieldset.choice legend { font-weight: 600; font-size: .92rem; padding: 0; margin-bottom: 6px; }
+.choice-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; }
+.choice-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.choice-opt span { display: flex; align-items: center; min-height: 42px; height: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: .88rem; line-height: 1.25; background: var(--surface); }
+.choice-opt input:checked + span { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.choice-opt input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* Welzijn */
+.trend { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+.trend.better { color: var(--good); }
+.trend.worse { color: var(--bad); }
+.stat-value small { font-size: .8rem; color: var(--muted); font-weight: 500; }
+.big-score { font-size: 2.6rem; font-weight: 700; margin: 0; line-height: 1.1; }
+.big-score small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+.journal { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.journal li + li { border-top: 1px solid var(--border); padding-top: 12px; }
+.journal p { margin: 2px 0 0; }
+.crisis { background: var(--info-bg); color: var(--text); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0; font-size: .92rem; line-height: 1.5; }
+.crisis a { color: var(--info); font-weight: 600; }
+details summary { cursor: pointer; }
+
 /* Afdrukken (medisch overzicht) */
 @media print {
   .topbar, .no-print, .toast, .actions { display: none !important; }

@@ -152,6 +152,12 @@
     const visitsPast = sortBy(store.list('visits').filter((v) => v.date < today), 'date', -1).slice(0, 5);
     const rx = store.list('prescriptions').filter(views.prescriptions.isOpen);
     const vacc = sortBy(store.list('vaccinations'), 'date', -1);
+    const wellbeing = views.wellbeing.TILES
+      .map((t) => ({ t, a: utils.average(store.list('checkins'), t.key, utils.addDays(today, -29), today) }))
+      .filter((x) => x.a);
+    const tests = Object.keys(HT.questionnaires.QUESTIONNAIRES)
+      .map((type) => sortBy(store.list('questionnaires').filter((r) => r.type === type), 'date', -1)[0])
+      .filter(Boolean);
 
     el.innerHTML = `
       <div class="no-print"><p><a href="#/profiel" class="back">← Profiel</a></p></div>
@@ -182,6 +188,13 @@
               <td>${s === 'low' || s === 'high' ? ui.statusBadge(s) : ''}</td></tr>`;
           }).join('')}</tbody></table></div>`).join('') : '<p class="muted">Geen uitslagen.</p>'}
       </section>
+
+      ${wellbeing.length || tests.length ? `<section class="card"><h2>Vermoeidheid & mentaal</h2>
+        ${wellbeing.length ? `<p class="muted">Gemiddelde van de afgelopen 30 dagen (dagelijkse check)</p><dl class="kvs">
+          ${wellbeing.map((x) => ui.kv(x.t.label, `${formatNum(x.a.avg.toFixed(1))} / ${x.t.scale} (${x.a.n} dagen)`)).join('')}</dl>` : ''}
+        ${tests.length ? `<p class="muted">Laatste zelftests</p><dl class="kvs">
+          ${tests.map((r) => ui.kv(HT.questionnaires.QUESTIONNAIRES[r.type].short, `${r.score} – ${r.level} (${formatDate(r.date)})`)).join('')}</dl>` : ''}
+      </section>` : ''}
 
       ${vacc.length ? `<section class="card"><h2>Vaccinaties</h2><div class="table-wrap"><table>
         <thead><tr><th>Datum</th><th>Vaccinatie</th><th>Prik</th><th>Batch</th><th>Volgende</th></tr></thead>

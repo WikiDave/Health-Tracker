@@ -1,6 +1,6 @@
 /* Algemene formulier-dialoog. Een formulier wordt beschreven met een lijst velden:
  *   { name, label, type, options, placeholder, required, half, help, list, min, max, step }
- * Types: text, number, date, time, textarea, select, checkbox, scale, times, results. */
+ * Types: text, number, date, time, textarea, select, checkbox, scale, choice, times, results, heading. */
 (function (HT) {
   'use strict';
   const { escapeHtml: esc, parseNum, parseTimes, formatNum, uid } = HT.utils;
@@ -37,6 +37,12 @@
     const cls = `field${f.half ? ' half' : ''}`;
 
     switch (f.type) {
+      case 'heading':
+        return `<div class="field full form-section"><h3>${esc(f.label)}</h3>${help}</div>`;
+      case 'choice':
+        return `<fieldset class="field full choice"><legend>${esc(f.label)}</legend><div class="choice-options">
+          ${f.options.map(([val, text]) => `<label class="choice-opt"><input type="radio" name="${f.name}" value="${esc(val)}"${String(v) === String(val) ? ' checked' : ''}><span>${esc(text)}</span></label>`).join('')}
+          </div>${help}</fieldset>`;
       case 'textarea':
         return `<div class="${cls} full">${label}<textarea id="${id}" name="${f.name}" rows="3"${attrs(f)}>${esc(v)}</textarea>${help}</div>`;
       case 'select':
@@ -75,7 +81,8 @@
     const out = {};
     const errors = [];
     for (const f of fields) {
-      if (f.type === 'scale') {
+      if (f.type === 'heading') continue;
+      if (f.type === 'scale' || f.type === 'choice') {
         const checked = form.querySelector(`input[name="${f.name}"]:checked`);
         out[f.name] = checked ? Number(checked.value) : null;
         continue;
