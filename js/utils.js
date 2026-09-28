@@ -128,8 +128,9 @@
     return `${medId}|${time}`;
   }
 
-  /** Therapietrouw tussen twee datums (inclusief): geplande vs genomen innames. */
-  function adherence(meds, medLog, fromISO, toISOStr) {
+  /** Therapietrouw tussen twee datums (inclusief): geplande vs genomen innames.
+   *  Met nowHHMM tellen innames op de laatste dag pas mee als hun tijd verstreken is (of ze al genomen zijn). */
+  function adherence(meds, medLog, fromISO, toISOStr, nowHHMM) {
     let planned = 0;
     let taken = 0;
     for (let d = fromISO; d <= toISOStr; d = addDays(d, 1)) {
@@ -137,8 +138,10 @@
       for (const med of meds) {
         if (!isMedActiveOn(med, d)) continue;
         for (const t of medTimes(med)) {
+          const isTaken = Boolean(day[doseKey(med.id, t)]);
+          if (nowHHMM && d === toISOStr && t > nowHHMM && !isTaken) continue;
           planned++;
-          if (day[doseKey(med.id, t)]) taken++;
+          if (isTaken) taken++;
         }
       }
     }
@@ -154,21 +157,19 @@
     return 'valid';
   }
 
-  /** Maakt een .ics-agenda-item voor een afspraak. */
+  const icsEsc = (s) => String(s || '').replace(/[\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+  const icsStamp = () => new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+
+  function icsCalendar(events) {
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Health-Tracker//NL', 'CALSCALE:GREGORIAN', ...events.flat(), 'END:VCALENDAR'].join('\r\n');
+  }
+
+  /** Maakt een .ics-agenda-item voor een afspraak (herinnering een dag vooraf). */
   function visitToICS(visit) {
     const date = String(visit.date || '').replace(/-/g, '');
-    const esc = (s) => String(s || '').replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Health-Tracker//NL',
-      'BEGIN:VEVENT',
-      `UID:${visit.id}@health-tracker`,
-      `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
-    ];
+    const lines = ['BEGIN:VEVENT', `UID:${visit.id}@health-tracker`, `DTSTAMP:${icsStamp()}`];
     if (visit.time) {
-      const t = visit.time.replace(':', '') + '00';
-      lines.push(`DTSTART:${date}T${t}`);
+      lines.push(`DTSTART:${date}T${visit.time.replace(':', '')}00`);
       const [h, m] = visit.time.split(':').map(Number);
       const end = new Date(2000, 0, 1, h, m + 30);
       lines.push(`DTEND:${date}T${pad(end.getHours())}${pad(end.getMinutes())}00`);
@@ -176,12 +177,73 @@
       lines.push(`DTSTART;VALUE=DATE:${date}`);
     }
     const title = [visit.type, visit.doctor || visit.location].filter(Boolean).join(' – ');
-    lines.push(`SUMMARY:${esc(title || 'Medische afspraak')}`);
-    if (visit.location) lines.push(`LOCATION:${esc(visit.location)}`);
-    if (visit.reason) lines.push(`DESCRIPTION:${esc(visit.reason)}`);
-    lines.push('BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:Herinnering afspraak', 'END:VALARM');
-    lines.push('END:VEVENT', 'END:VCALENDAR');
-    return lines.join('\r\n');
+    lines.push(`SUMMARY:${icsEsc(title || 'Medische afspraak')}`);
+    if (visit.location) lines.push(`LOCATION:${icsEsc(visit.location)}`);
+    if (visit.reason) lines.push(`DESCRIPTION:${icsEsc(visit.reason)}`);
+    lines.push('BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:Herinnering afspraak', 'END:VALARM', 'END:VEVENT');
+    return icsCalendar([lines]);
+  }
+
+  /** Dagelijks terugkerende agenda-items (met melding) voor alle innametijden. */
+  function medsToICS(meds, today) {
+    const events = [];
+    for (const med of meds) {
+      if (med.active === false || (med.endDate && med.endDate < today)) continue;
+      const start = (med.startDate && med.startDate > today ? med.startDate : today).replace(/-/g, '');
+      for (const time of medTimes(med)) {
+        const t = time.replace(':', '') + '00';
+        const [h, m] = time.split(':').map(Number);
+        const end = new Date(2000, 0, 1, h, m + 5);
+        const ev = [
+          'BEGIN:VEVENT',
+          `UID:${med.id}-${time.replace(':', '')}@health-tracker`,
+          `DTSTAMP:${icsStamp()}`,
+          `DTSTART:${start}T${t}`,
+          `DTEND:${start}T${pad(end.getHours())}${pad(end.getMinutes())}00`,
+          `RRULE:FREQ=DAILY${med.endDate ? `;UNTIL=${med.endDate.replace(/-/g, '')}T235959` : ''}`,
+          `SUMMARY:${icsEsc(`💊 ${med.name}${med.dose ? ' ' + med.dose : ''}`)}`,
+        ];
+        if (med.instructions) ev.push(`DESCRIPTION:${icsEsc(med.instructions)}`);
+        ev.push('BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc('Tijd voor ' + med.name)}`, 'END:VALARM', 'END:VEVENT');
+        events.push(ev);
+      }
+    }
+    return icsCalendar(events);
+  }
+
+  function minutesOf(hhmm) {
+    const [h, m] = String(hhmm).split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  /** Innames van vandaag die nu aan de beurt zijn (tijd verstreken, max. windowMin geleden) en nog niet genomen. */
+  function dueDoses(meds, medLog, date, nowHHMM, windowMin = 120) {
+    const now = minutesOf(nowHHMM);
+    const day = (medLog && medLog[date]) || {};
+    const out = [];
+    for (const med of meds) {
+      if (!isMedActiveOn(med, date)) continue;
+      for (const time of medTimes(med)) {
+        const diff = now - minutesOf(time);
+        if (diff >= 0 && diff <= windowMin && !day[doseKey(med.id, time)]) out.push({ med, time });
+      }
+    }
+    return out;
+  }
+
+  /** Vaccinaties waarvan de volgende prik binnen 30 dagen (of al) moet, zonder dat er al een latere is gezet. */
+  function vaccinationsDue(vaccinations, today) {
+    const out = [];
+    for (const v of vaccinations) {
+      if (!v.nextDue) continue;
+      const name = String(v.name || '').trim().toLowerCase();
+      const later = vaccinations.some((w) => w !== v && String(w.name || '').trim().toLowerCase() === name && w.date > v.date);
+      if (later) continue;
+      const left = daysBetween(today, v.nextDue);
+      if (left < 0) out.push({ vaccination: v, status: 'overdue', days: left });
+      else if (left <= 30) out.push({ vaccination: v, status: 'soon', days: left });
+    }
+    return out;
   }
 
   function sortBy(arr, key, dir = 1) {
@@ -197,7 +259,7 @@
     formatDate, formatDateLong, formatDateShort,
     escapeHtml, uid, parseNum, formatNum, parseTimes,
     rangeStatus, isMedActiveOn, medTimes, daysOfStockLeft, doseKey, adherence,
-    prescriptionStatus, visitToICS, sortBy,
+    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, sortBy,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

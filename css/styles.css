@@ -174,7 +174,7 @@ textarea { resize: vertical; }
 /* Medicatie-innames */
 .doses { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
 .dose-toggle {
-  display: grid; grid-template-columns: 30px 52px 1fr; align-items: center; gap: 8px; width: 100%;
+  display: grid; grid-template-columns: 30px 52px 1fr auto; align-items: center; gap: 8px; width: 100%;
   padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
   color: var(--text); font: inherit; text-align: left; cursor: pointer;
 }
@@ -187,6 +187,24 @@ textarea { resize: vertical; }
 .doses li.taken .what strong { text-decoration: line-through; text-decoration-thickness: 1px; }
 .progress { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 4px 0 8px; }
 .progress span { display: block; height: 100%; background: var(--good); border-radius: 999px; transition: width .2s; }
+
+.doses li.late .dose-toggle { border-color: var(--warn); }
+.late-label { font-size: .75rem; font-weight: 600; color: var(--warn); background: var(--warn-bg); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+@media (max-width: 420px) { .late-label { grid-column: 3 / -1; justify-self: start; } }
+
+/* Pijndagboek */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 4px 0 14px; }
+.stats > div { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; }
+.stat-value { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat-value.small { font-size: 1rem; line-height: 1.3; padding: 4px 0; }
+.stat-label { font-size: .8rem; color: var(--muted); }
+.pain-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
+.pain-list li { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: start; }
+.pain-score { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 1.1rem; }
+.pain-score.good { background: var(--good-bg); color: var(--good); }
+.pain-score.warn { background: var(--warn-bg); color: var(--warn); }
+.pain-score.bad { background: var(--bad-bg); color: var(--bad); }
+.pain-body small { color: var(--text-2); }
 
 /* Bloeduitslagen */
 .table-wrap { overflow-x: auto; margin: 8px 0; }

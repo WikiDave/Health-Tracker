@@ -51,16 +51,21 @@
   function doseListHtml(date) {
     const doses = dosesFor(date);
     if (!doses.length) return '<p class="muted">Geen vaste innames gepland.</p>';
-    return `<ul class="doses">${doses.map((d) => `
-      <li class="${d.taken ? 'taken' : ''}">
+    const now = date === todayISO() ? utils.nowTime() : null;
+    return `<ul class="doses">${doses.map((d) => {
+      const late = !d.taken && now && d.time < now;
+      return `
+      <li class="${d.taken ? 'taken' : late ? 'late' : ''}">
         <button class="dose-toggle" data-dose="${esc(d.med.id)}|${esc(d.time)}" data-date="${date}" aria-pressed="${d.taken}">
           <span class="check" aria-hidden="true">${d.taken ? '✓' : ''}</span>
           <span class="time">${esc(d.time)}</span>
           <span class="what"><strong>${esc(d.med.name)}</strong> ${esc(d.med.dose || '')}
             ${d.med.unitsPerDose > 1 ? `<span class="muted">(${formatNum(d.med.unitsPerDose)} st.)</span>` : ''}
             ${d.med.instructions ? `<small>${esc(d.med.instructions)}</small>` : ''}</span>
+          ${late ? '<span class="late-label">nog niet genomen</span>' : ''}
         </button>
-      </li>`).join('')}</ul>`;
+      </li>`;
+    }).join('')}</ul>`;
   }
 
   function bindDoses(el) {
@@ -73,7 +78,7 @@
   function medCard(med, today) {
     const times = medTimes(med);
     const left = daysOfStockLeft(med);
-    const adh = adherence([med], store.data.medLog, addDays(today, -29), today);
+    const adh = adherence([med], store.data.medLog, addDays(today, -29), today, utils.nowTime());
     return `
       <article class="card item">
         <div class="item-head">
@@ -96,6 +101,21 @@
       </article>`;
   }
 
+  function remindersHtml() {
+    const r = HT.reminders;
+    const on = store.data.settings.notify && r.permission() === 'granted';
+    return `<section class="card">
+      <div class="card-head"><h2>🔔 Herinneringen</h2>${on ? ui.badge('✓ Aan', 'good') : ui.badge('Uit')}</div>
+      <p>Zet je innametijden in de agenda van je telefoon: dan krijg je <strong>altijd</strong> een melding, ook als deze app dicht is.</p>
+      <div class="button-row">
+        <button class="btn primary" data-ics-meds>📆 Innametijden in agenda zetten</button>
+        ${on ? '<button class="btn ghost" data-notify-off>Meldingen van app uitzetten</button><button class="btn ghost" data-notify-test>Testmelding</button>'
+          : r.supported() ? '<button class="btn ghost" data-notify-on>Meldingen van app aanzetten</button>' : ''}
+      </div>
+      <p class="muted small">Meldingen van de app zelf komen alleen als de app open staat of net op de achtergrond draait. Wijzig je medicatie? Zet de agenda-items dan opnieuw in je agenda (verwijder de oude).</p>
+    </section>`;
+  }
+
   function render(el) {
     const today = todayISO();
     const meds = sortBy(store.list('medications'), (m) => m.name.toLowerCase());
@@ -110,9 +130,15 @@
       </section>
       <h2 class="section-title">Huidige medicatie (${active.length})</h2>
       ${active.length ? active.map((m) => medCard(m, today)).join('') : ui.empty('Nog geen medicijnen toegevoegd.')}
+      ${active.some((m) => medTimes(m).length) ? remindersHtml() : ''}
       ${stopped.length ? `<details class="stopped"><summary>Gestopte medicatie (${stopped.length})</summary>${stopped.map((m) => medCard(m, today)).join('')}</details>` : ''}`;
 
     el.querySelector('[data-add]').addEventListener('click', () => openMed());
+    const on = (sel, fn) => { const b = el.querySelector(sel); if (b) b.addEventListener('click', fn); };
+    on('[data-ics-meds]', () => ui.download('medicatie-herinneringen.ics', utils.medsToICS(store.list('medications'), today), 'text/calendar'));
+    on('[data-notify-on]', () => HT.reminders.enable());
+    on('[data-notify-off]', () => HT.reminders.disable());
+    on('[data-notify-test]', () => HT.reminders.test());
     el.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openMed(store.get('medications', b.dataset.edit))));
     bindDoses(el);
   }

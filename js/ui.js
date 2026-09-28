@@ -35,8 +35,9 @@
       return `<div class="kv"><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`;
     },
 
-    download(filename, text, type = 'application/json') {
-      const blob = new Blob([text], { type });
+    /** Biedt tekst of bytes (Uint8Array) aan als download. */
+    download(filename, content, type = 'application/json') {
+      const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

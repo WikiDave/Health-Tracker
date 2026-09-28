@@ -7,9 +7,11 @@
     '': views.dashboard,
     check: views.checkin,
     medicatie: views.medication,
+    pijn: views.pain,
     bloed: views.labs,
     recepten: views.prescriptions,
     bezoeken: views.visits,
+    vaccinaties: views.vaccinations,
     profiel: views.profile,
     overzicht: views.overview,
   };

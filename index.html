@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gezondheid</title>
-  <meta name="description" content="Houd je gezondheid bij: medicatie, bloedonderzoeken, voorschriften, doktersbezoeken en een dagelijkse check.">
+  <meta name="description" content="Houd je gezondheid bij: medicatie, bloedonderzoeken, voorschriften, doktersbezoeken, vaccinaties, pijndagboek en een dagelijkse check.">
   <meta name="theme-color" content="#2a78d6">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
@@ -19,9 +19,11 @@
       <a href="#/"><span aria-hidden="true">🏠</span>Vandaag</a>
       <a href="#/check"><span aria-hidden="true">📝</span>Check</a>
       <a href="#/medicatie"><span aria-hidden="true">💊</span>Medicatie</a>
+      <a href="#/pijn"><span aria-hidden="true">⚡</span>Pijn</a>
       <a href="#/bloed"><span aria-hidden="true">🩸</span>Bloed</a>
       <a href="#/recepten"><span aria-hidden="true">📄</span>Voorschriften</a>
       <a href="#/bezoeken"><span aria-hidden="true">🏥</span>Bezoeken</a>
+      <a href="#/vaccinaties"><span aria-hidden="true">💉</span>Vaccinaties</a>
       <a href="#/profiel"><span aria-hidden="true">👤</span>Profiel</a>
     </nav>
   </header>
@@ -74,18 +76,37 @@
     <option value="Albumine/kreatinine-ratio (urine)">
   </datalist>
 
+  <datalist id="body-parts">
+    <option value="Hoofd"><option value="Kaak"><option value="Nek"><option value="Schouder"><option value="Arm">
+    <option value="Elleboog"><option value="Pols / hand"><option value="Borst"><option value="Bovenrug"><option value="Onderrug">
+    <option value="Buik"><option value="Bekken"><option value="Heup"><option value="Been"><option value="Knie">
+    <option value="Enkel"><option value="Voet"><option value="Spieren (overal)"><option value="Gewrichten (overal)">
+  </datalist>
+
+  <datalist id="vaccine-names">
+    <option value="Griep (influenza)"><option value="COVID-19"><option value="Pneumokokken"><option value="RSV">
+    <option value="Gordelroos"><option value="DTP (difterie, tetanus, polio)"><option value="Tetanus"><option value="BMR (bof, mazelen, rodehond)">
+    <option value="HPV"><option value="Meningokokken ACWY"><option value="Hepatitis A"><option value="Hepatitis B">
+    <option value="Gele koorts"><option value="Buiktyfus"><option value="Rabiës (hondsdolheid)"><option value="Kinkhoest">
+  </datalist>
+
   <noscript><p class="container">Deze app heeft JavaScript nodig.</p></noscript>
 
   <script src="js/utils.js"></script>
   <script src="js/store.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/form.js"></script>
+  <script src="js/xlsx.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/reminders.js"></script>
   <script src="js/chart.js"></script>
   <script src="js/views/checkin.js"></script>
   <script src="js/views/medication.js"></script>
   <script src="js/views/labs.js"></script>
   <script src="js/views/prescriptions.js"></script>
   <script src="js/views/visits.js"></script>
+  <script src="js/views/pain.js"></script>
+  <script src="js/views/vaccinations.js"></script>
   <script src="js/views/profile.js"></script>
   <script src="js/views/dashboard.js"></script>
   <script src="js/app.js"></script>

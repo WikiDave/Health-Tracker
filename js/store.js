@@ -4,7 +4,7 @@
   const { uid, doseKey, parseNum } = HT.utils;
 
   const KEY = 'health-tracker-v1';
-  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins'];
+  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain'];
 
   function empty() {
     return {
@@ -16,6 +16,9 @@
       labs: [],
       visits: [],
       checkins: [],
+      vaccinations: [],
+      pain: [],
+      settings: {},
     };
   }
 
@@ -24,6 +27,7 @@
     for (const c of COLLECTIONS) if (!Array.isArray(data[c])) data[c] = [];
     if (!data.profile || typeof data.profile !== 'object') data.profile = {};
     if (!data.medLog || typeof data.medLog !== 'object') data.medLog = {};
+    if (!data.settings || typeof data.settings !== 'object') data.settings = {};
     return data;
   }
 
@@ -90,6 +94,11 @@
 
     saveProfile(profile) {
       data.profile = Object.assign({}, data.profile, profile);
+      save();
+    },
+
+    saveSettings(settings) {
+      data.settings = Object.assign({}, data.settings, settings);
       save();
     },
 

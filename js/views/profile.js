@@ -60,6 +60,27 @@
       </section>
 
       <section class="card">
+        <h2>🔔 Herinnering dagelijkse check</h2>
+        <p>Krijg een melding als je je dagelijkse check nog niet hebt ingevuld.</p>
+        <div class="button-row">
+          <input type="time" data-checkin-time value="${esc(store.data.settings.checkinTime || '')}" aria-label="Tijd herinnering" style="width:auto">
+          <button class="btn ghost" data-checkin-save>Opslaan</button>
+          ${store.data.settings.checkinTime ? '<button class="btn ghost" data-checkin-off>Uitzetten</button>' : ''}
+        </div>
+        ${store.data.settings.checkinTime && !(store.data.settings.notify && HT.reminders.permission() === 'granted')
+          ? '<p class="muted small">Zet ook de meldingen aan (knop hieronder), anders krijg je geen herinnering.</p>' : ''}
+        ${store.data.settings.notify && HT.reminders.permission() === 'granted' ? ''
+          : HT.reminders.supported() ? '<button class="btn ghost" data-notify-on>Meldingen aanzetten</button>' : ''}
+        <p class="muted small">Herinneringen voor medicatie stel je in bij <a href="#/medicatie">Medicatie</a>.</p>
+      </section>
+
+      <section class="card">
+        <h2>Exporteren naar Excel</h2>
+        <p>Download al je gegevens als Excel-bestand, met een tabblad per onderdeel. Handig om te bekijken, te filteren of te delen met je arts.</p>
+        <button class="btn ghost" data-excel>📊 Excel-bestand downloaden</button>
+      </section>
+
+      <section class="card">
         <h2>Back-up</h2>
         <p>Je gegevens staan <strong>alleen in deze browser op dit apparaat</strong>. Maak regelmatig een back-up, bijvoorbeeld om over te zetten naar een ander apparaat.</p>
         <div class="button-row">
@@ -86,6 +107,17 @@
         ui.toast('Profiel opgeslagen');
       },
     }));
+
+    el.querySelector('[data-excel]').addEventListener('click', () => HT.exporter.toExcel());
+    el.querySelector('[data-checkin-save]').addEventListener('click', () => {
+      const t = el.querySelector('[data-checkin-time]').value;
+      store.saveSettings({ checkinTime: t || '' });
+      ui.toast(t ? `Herinnering om ${t}` : 'Herinnering uitgezet');
+    });
+    const off = el.querySelector('[data-checkin-off]');
+    if (off) off.addEventListener('click', () => { store.saveSettings({ checkinTime: '' }); ui.toast('Herinnering uitgezet'); });
+    const notifyOn = el.querySelector('[data-notify-on]');
+    if (notifyOn) notifyOn.addEventListener('click', () => HT.reminders.enable());
 
     el.querySelector('[data-export]').addEventListener('click', () => {
       ui.download(`gezondheid-backup-${todayISO()}.json`, store.exportJSON());
@@ -119,6 +151,7 @@
     const visitsUp = sortBy(store.list('visits').filter((v) => v.date >= today), 'date');
     const visitsPast = sortBy(store.list('visits').filter((v) => v.date < today), 'date', -1).slice(0, 5);
     const rx = store.list('prescriptions').filter(views.prescriptions.isOpen);
+    const vacc = sortBy(store.list('vaccinations'), 'date', -1);
 
     el.innerHTML = `
       <div class="no-print"><p><a href="#/profiel" class="back">← Profiel</a></p></div>
@@ -149,6 +182,12 @@
               <td>${s === 'low' || s === 'high' ? ui.statusBadge(s) : ''}</td></tr>`;
           }).join('')}</tbody></table></div>`).join('') : '<p class="muted">Geen uitslagen.</p>'}
       </section>
+
+      ${vacc.length ? `<section class="card"><h2>Vaccinaties</h2><div class="table-wrap"><table>
+        <thead><tr><th>Datum</th><th>Vaccinatie</th><th>Prik</th><th>Batch</th><th>Volgende</th></tr></thead>
+        <tbody>${vacc.map((v) => `<tr><td>${esc(formatDate(v.date))}</td><td>${esc(v.name)}${v.product ? ` <small>(${esc(v.product)})</small>` : ''}</td>
+          <td>${esc(v.doseNumber || '')}</td><td>${esc(v.batch || '')}</td><td>${esc(formatDate(v.nextDue))}</td></tr>`).join('')}</tbody>
+      </table></div></section>` : ''}
 
       <section class="card"><h2>Afspraken</h2>
         ${visitsUp.length ? `<h3>Gepland</h3><ul class="list">${visitsUp.map((v) => `<li>${esc(formatDate(v.date))}${v.time ? ' ' + esc(v.time) : ''} – ${esc([v.type, v.specialty, v.doctor, v.location].filter(Boolean).join(' · '))}</li>`).join('')}</ul>` : ''}
