@@ -2,6 +2,21 @@
 
 Een app om je gezondheid bij te houden, op je telefoon of computer.
 
+## Menu
+
+| Menu | Onderdelen |
+|---|---|
+| 🏠 **Vandaag** | Startscherm met je dag in één oogopslag en snelknoppen |
+| 📝 **Check** | De dagelijkse check |
+| 📔 **Dagboek** | Welzijn, Slaap, Pijn, Sport, Voeding, Drinken, Stoelgang, Middelen, Omgeving |
+| 💊 **Medicijnen** | Medicatie, Supplementen, Voorschriften |
+| 🏥 **Medisch** | Bloedonderzoeken, Bezoeken, Vaccinaties |
+| 👤 **Profiel** | Je gegevens, medisch overzicht, Excel-export en back-up |
+
+Op de telefoon staat het menu als balk onderin. Een groep opent een pagina met tegels (met de stand van vandaag); binnen een groep wissel je via de knoppen bovenaan.
+
+## Onderdelen
+
 | Onderdeel | Wat kun je ermee |
 |---|---|
 | 🏠 **Vandaag** | Overzicht van de dag: je dagelijkse check, welke medicijnen je nog moet innemen, aandachtspunten (bijna op, recept verloopt, afwijkende bloedwaarden) en je komende afspraken. |
