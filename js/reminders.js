@@ -68,6 +68,17 @@
       }
     }
 
+    if (s.energyPrompts) {
+      // Rond 10:00, 14:00 en 19:00 vragen, als je in dat dagdeel nog geen energie hebt vastgelegd.
+      const windows = [['10:00', '11:59', 'ochtend'], ['14:00', '16:59', 'middag'], ['19:00', '21:30', 'avond']];
+      const win = windows.find(([a, b]) => now >= a && now <= b);
+      const log = (store.checkinFor(today) || {}).energyLog || [];
+      if (win && !sent[`${today}|energy|${win[2]}`] && !log.some((x) => HT.energy.partOfDay(x.time) === win[2])) {
+        notify('🔋 Hoe is je energie nu?', 'Tik in de app hoe energiek je je voelt – het kost 2 seconden.', `energy-${today}-${win[2]}`);
+        markSent(`${today}|energy|${win[2]}`);
+      }
+    }
+
     if (s.checkinTime && now >= s.checkinTime && !store.checkinDone(today) && !sent[`${today}|checkin`]) {
       notify('📝 Dagelijkse check', 'Hoe ging het vandaag? Vul je dagelijkse check in.', `checkin-${today}`);
       markSent(`${today}|checkin`);

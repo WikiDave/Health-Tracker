@@ -120,7 +120,8 @@
     checkinDone(date) {
       const c = store.checkinFor(date);
       if (!c) return false;
-      return Boolean(c.completed) || ['mood', 'energy', 'pain', 'fatigue', 'stress', 'systolic', 'weight', 'symptoms'].some((k) => c[k] != null && c[k] !== '');
+      // 'energy' telt niet mee: die wordt ook door de snelle energieknoppen gezet.
+      return Boolean(c.completed) || ['mood', 'pain', 'fatigue', 'stress', 'systolic', 'weight', 'symptoms'].some((k) => c[k] != null && c[k] !== '');
     },
 
     isTaken(date, medId, time) {

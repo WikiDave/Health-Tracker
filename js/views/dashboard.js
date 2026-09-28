@@ -73,7 +73,9 @@
         ${quit ? `<p>${ui.badge(`🚭 ${quit.days} dagen rookvrij`, 'good')}</p>` : ''}
       </div>
 
-      ${isEmpty ? '' : views.healthmeter.cardHtml()}
+      ${views.healthmeter.cardHtml()}
+
+      ${views.energy.cardHtml()}
 
       ${isEmpty ? `<section class="card welcome">
         <h2>Welkom bij je Gezondheidsapp 👋</h2>
@@ -145,6 +147,7 @@
     el.querySelector('[data-bowel]').addEventListener('click', () => views.bowel.openBowel());
     el.querySelector('[data-food]').addEventListener('click', () => views.nutrition.openFood());
     views.hydration.bindQuick(el, today);
+    views.energy.bindQuick(el);
     el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
     el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
     el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));

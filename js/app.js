@@ -7,6 +7,7 @@
     '': views.dashboard,
     check: views.checkin,
     meter: views.healthmeter,
+    energie: views.energy,
     welzijn: views.wellbeing,
     medicatie: views.medication,
     supplementen: views.supplements,

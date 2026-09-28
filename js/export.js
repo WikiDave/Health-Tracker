@@ -89,6 +89,12 @@
         rows: sortBy(data.checkins.filter((c) => ['veg', 'fruit', 'water', 'appetite'].some((k) => c[k] != null)), 'date', -1).map((c) => [d(c.date), c.veg, c.fruit, c.water, c.appetite]),
       },
       {
+        name: 'Energie',
+        columns: ['Datum', 'Tijd', 'Energie (1-5)', 'Omschrijving'],
+        rows: sortBy(data.checkins.filter((c) => Array.isArray(c.energyLog) && c.energyLog.length), 'date', -1)
+          .flatMap((c) => sortBy(c.energyLog, 'time').map((x) => [d(c.date), x.time, x.level, (HT.energy.LEVELS.find((l) => l.value === x.level) || {}).label])),
+      },
+      {
         name: 'Drinken',
         columns: ['Datum', 'Tijd', 'Wat', 'ml'],
         rows: sortBy(data.checkins.filter((c) => Array.isArray(c.drinks) && c.drinks.length), 'date', -1)
