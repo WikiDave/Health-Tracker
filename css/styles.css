@@ -338,6 +338,17 @@ details summary { cursor: pointer; }
 .check-inline { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: .92rem; }
 .check-inline input { width: 20px; height: 20px; min-height: 0; }
 
+/* Drinken */
+.fluid-big { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.fluid-big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+.progress.over span { background: var(--bad); }
+.quick-drinks { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.quick-drinks .btn small { color: var(--muted); font-weight: 500; }
+.drink-list { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 2px; }
+.drink-list li { display: grid; grid-template-columns: 48px 1fr auto 36px; align-items: center; gap: 8px; padding: 2px 0; border-bottom: 1px solid var(--border); }
+.field.urine { margin-top: 12px; }
+.field.urine select { width: auto; }
+
 /* Afdrukken (medisch overzicht) */
 @media print {
   .topbar, .no-print, .toast, .actions { display: none !important; }

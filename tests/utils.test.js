@@ -195,3 +195,17 @@ test('sameDayEffect vergelijkt dagen met en zonder situatie', () => {
   ];
   assert.deepEqual(u.sameDayEffect(c, (x) => x.worked, 'stress'), { withIt: 6, without: 3, n: 6 });
 });
+
+test('fluidMl gebruikt de drinklog, anders het oude aantal glazen', () => {
+  assert.equal(u.fluidMl({ drinks: [{ ml: 250 }, { ml: '500' }, { ml: 150 }] }), 900);
+  assert.equal(u.fluidMl({ water: 6 }), 1500);
+  assert.equal(u.fluidMl({ water: 6, drinks: [] }), 1500);
+  assert.equal(u.fluidMl({}), null);
+  assert.equal(u.fluidMl(null), null);
+});
+
+test('expectedFluid verdeelt het doel over de dag', () => {
+  assert.equal(u.expectedFluid(2000, '07:00'), 0);
+  assert.equal(u.expectedFluid(2000, '15:00'), 1000);
+  assert.equal(u.expectedFluid(2000, '23:30'), 2000);
+});

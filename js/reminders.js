@@ -58,6 +58,16 @@
       fresh.forEach((d) => markSent(`${today}|${d.med.id}|${d.time}`));
     }
 
+    if (s.hydrationReminder && s.fluidMode !== 'max' && now >= '09:00' && now <= '21:00') {
+      const block = `${today}|drink|${now.slice(0, 2) - (now.slice(0, 2) % 2)}`; // hooguit eens per 2 uur
+      const goal = Number(s.fluidGoal) || 2000;
+      const drunk = utils.fluidMl(store.checkinFor(today)) || 0;
+      if (!sent[block] && utils.expectedFluid(goal, now) - drunk >= 500) {
+        notify('💧 Tijd om wat te drinken', `Je hebt vandaag ${drunk} ml gedronken van je doel van ${goal} ml.`, `drink-${today}`);
+        markSent(block);
+      }
+    }
+
     if (s.checkinTime && now >= s.checkinTime && !store.checkinDone(today) && !sent[`${today}|checkin`]) {
       notify('📝 Dagelijkse check', 'Hoe ging het vandaag? Vul je dagelijkse check in.', `checkin-${today}`);
       markSent(`${today}|checkin`);

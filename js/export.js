@@ -33,10 +33,10 @@
       },
       {
         name: 'Medicatie',
-        columns: ['Naam', 'Dosis', 'Vorm', 'Innametijden', 'Aantal per inname', 'Gebruiksaanwijzing', 'Waarvoor', 'Voorgeschreven door', 'Start', 'Einde', 'Voorraad', 'Apotheek', 'In gebruik', 'Notities'],
-        rows: sortBy(data.medications, (m) => m.name.toLowerCase()).map((m) => [
-          m.name, m.dose, m.form, medTimes(m).join(', ') || 'zo nodig', m.unitsPerDose, m.instructions, m.reason, m.prescriber,
-          d(m.startDate), d(m.endDate), m.stock, m.pharmacy, m.active !== false, m.notes,
+        columns: ['Soort', 'Naam', 'Dosis', 'Vorm', 'Merk', 'Innametijden', 'Aantal per inname', 'Gebruiksaanwijzing', 'Waarvoor', 'Voorgeschreven / geadviseerd door', 'Start', 'Einde', 'Voorraad', 'Apotheek', 'In gebruik', 'Notities'],
+        rows: sortBy(data.medications, (m) => (m.kind === 'supplement' ? '1' : '0') + m.name.toLowerCase()).map((m) => [
+          m.kind === 'supplement' ? 'Supplement' : 'Medicijn', m.name, m.dose, m.form, m.brand, medTimes(m).join(', ') || 'zo nodig', m.unitsPerDose, m.instructions, m.reason,
+          m.prescriber || m.advisedBy, d(m.startDate), d(m.endDate), m.stock, m.pharmacy, m.active !== false, m.notes,
         ]),
       },
       {
@@ -87,6 +87,17 @@
         name: 'Voeding per dag',
         columns: ['Datum', 'Groente (g)', 'Fruit (stuks)', 'Drinken (glazen)', 'Eetlust (1-5)'],
         rows: sortBy(data.checkins.filter((c) => ['veg', 'fruit', 'water', 'appetite'].some((k) => c[k] != null)), 'date', -1).map((c) => [d(c.date), c.veg, c.fruit, c.water, c.appetite]),
+      },
+      {
+        name: 'Drinken',
+        columns: ['Datum', 'Tijd', 'Wat', 'ml'],
+        rows: sortBy(data.checkins.filter((c) => Array.isArray(c.drinks) && c.drinks.length), 'date', -1)
+          .flatMap((c) => c.drinks.map((x) => [d(c.date), x.time, x.type, x.ml])),
+      },
+      {
+        name: 'Drinken per dag',
+        columns: ['Datum', 'Totaal (ml)', 'Kleur urine'],
+        rows: sortBy(data.checkins.filter((c) => utils.fluidMl(c) != null || c.urineColor), 'date', -1).map((c) => [d(c.date), utils.fluidMl(c), c.urineColor]),
       },
       {
         name: 'Middelen',

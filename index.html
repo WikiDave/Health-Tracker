@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gezondheid</title>
-  <meta name="description" content="Houd je gezondheid bij: medicatie, bloedonderzoeken, voorschriften, doktersbezoeken, vaccinaties, pijndagboek, sport, voeding, slaap, stoelgang, middelengebruik, omgeving, vermoeidheid, mentale gezondheid en een dagelijkse check.">
+  <meta name="description" content="Houd je gezondheid bij: medicatie, bloedonderzoeken, voorschriften, doktersbezoeken, vaccinaties, pijndagboek, sport, voeding, drinken, supplementen, slaap, stoelgang, middelengebruik, omgeving, vermoeidheid, mentale gezondheid en een dagelijkse check.">
   <meta name="theme-color" content="#2a78d6">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
@@ -21,9 +21,11 @@
       <a href="#/welzijn"><span aria-hidden="true">🧠</span>Welzijn</a>
       <a href="#/slaap"><span aria-hidden="true">🌙</span>Slaap</a>
       <a href="#/medicatie"><span aria-hidden="true">💊</span>Medicatie</a>
+      <a href="#/supplementen"><span aria-hidden="true">🌿</span>Supplementen</a>
       <a href="#/pijn"><span aria-hidden="true">⚡</span>Pijn</a>
       <a href="#/sport"><span aria-hidden="true">🏃</span>Sport</a>
       <a href="#/voeding"><span aria-hidden="true">🥗</span>Voeding</a>
+      <a href="#/drinken"><span aria-hidden="true">💧</span>Drinken</a>
       <a href="#/stoelgang"><span aria-hidden="true">🚽</span>Stoelgang</a>
       <a href="#/middelen"><span aria-hidden="true">🍷</span>Middelen</a>
       <a href="#/omgeving"><span aria-hidden="true">🌳</span>Omgeving</a>
@@ -103,6 +105,13 @@
     <option value="Dansen"><option value="Tuinieren"><option value="Tennis / padel"><option value="Voetbal"><option value="Nordic walking"><option value="Traplopen">
   </datalist>
 
+  <datalist id="supplement-names">
+    <option value="Vitamine D"><option value="Vitamine B12"><option value="Foliumzuur"><option value="Multivitamine"><option value="Vitamine C">
+    <option value="IJzer"><option value="Magnesium"><option value="Calcium"><option value="Zink"><option value="Omega-3 (visolie)">
+    <option value="Vitamine K2"><option value="Vitamine B-complex"><option value="Jodium"><option value="Probiotica"><option value="Melatonine">
+    <option value="Kurkuma"><option value="Sint-janskruid"><option value="Glucosamine"><option value="Co-enzym Q10"><option value="Creatine"><option value="Eiwitpoeder">
+  </datalist>
+
   <datalist id="drug-names">
     <option value="Cannabis (wiet / hasj)"><option value="XTC / MDMA"><option value="Cocaïne"><option value="Speed (amfetamine)"><option value="Ketamine">
     <option value="GHB"><option value="Lachgas"><option value="Paddo's / truffels"><option value="LSD"><option value="3-MMC / 4-MMC">
@@ -132,6 +141,7 @@
   <script src="js/views/bowel.js"></script>
   <script src="js/views/sleep.js"></script>
   <script src="js/views/nutrition.js"></script>
+  <script src="js/views/hydration.js"></script>
   <script src="js/views/substances.js"></script>
   <script src="js/views/environment.js"></script>
   <script src="js/views/profile.js"></script>
