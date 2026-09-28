@@ -42,6 +42,7 @@
         href: '#/welzijn',
       });
     }
+    for (const w of views.bowel.warnings(today)) out.push({ kind: 'bad', text: w, href: '#/stoelgang' });
     const lastLab = sortBy(store.list('labs'), 'date', -1)[0];
     if (lastLab) {
       const out1 = (lastLab.results || []).filter((r) => ['low', 'high'].includes(rangeStatus(r.value, r.low, r.high)));
@@ -61,7 +62,7 @@
     const week = adherence(store.list('medications'), store.data.medLog, addDays(today, -6), today, utils.nowTime());
     const upcoming = sortBy(store.list('visits').filter((v) => v.date >= today), (v) => v.date + (v.time || '')).slice(0, 3);
     const warn = alerts(today);
-    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain'].some((c) => store.list(c).length);
+    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain', 'sport', 'bowel'].some((c) => store.list(c).length);
     const painToday = store.list('pain').filter((e) => e.date === today);
 
     el.innerHTML = `
@@ -88,7 +89,12 @@
           ${checkin ? views.checkin.summaryHtml(checkin) : '<p>Hoe gaat het vandaag? Het kost je minder dan een minuut.</p>'}
           <div class="button-row">
             <button class="btn ${checkin ? 'ghost' : 'primary'}" data-checkin>${checkin ? 'Bewerken' : 'Start check'}</button>
-            <button class="btn ghost" data-pain>+ Pijn noteren</button>
+          </div>
+          <div class="quick-add">
+            <span class="muted small">Snel noteren:</span>
+            <button class="btn small ghost" data-pain>⚡ Pijn</button>
+            <button class="btn small ghost" data-sport>🏃 Sport</button>
+            <button class="btn small ghost" data-bowel>🚽 Stoelgang</button>
           </div>
           ${painToday.length ? `<p class="muted">Vandaag ${painToday.length}× pijn genoteerd (hoogste ${Math.max(...painToday.map((e) => e.intensity))}/10) · <a href="#/pijn">bekijk</a></p>` : ''}
         </section>
@@ -100,6 +106,11 @@
           ${week.pct != null ? `<p class="muted">Afgelopen 7 dagen: ${week.pct}% ingenomen</p>` : ''}
         </section>
       </div>
+
+      ${store.list('sport').length ? `<section class="card">
+        <div class="card-head"><h2>Beweging deze week</h2><a href="#/sport">Alles</a></div>
+        ${views.sport.progressHtml(views.sport.thisWeek(today))}
+      </section>` : ''}
 
       ${warn.length ? `<section class="card">
         <h2>Aandachtspunten</h2>
@@ -119,6 +130,8 @@
     el.querySelector('[data-checkin]').addEventListener('click', () => views.checkin.openCheckin(today));
     el.querySelector('[data-visit]').addEventListener('click', () => views.visits.openVisit());
     el.querySelector('[data-pain]').addEventListener('click', () => views.pain.openPain());
+    el.querySelector('[data-sport]').addEventListener('click', () => views.sport.openSport());
+    el.querySelector('[data-bowel]').addEventListener('click', () => views.bowel.openBowel());
     views.medication.bindDoses(el);
   }
 

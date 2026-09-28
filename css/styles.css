@@ -321,6 +321,15 @@ fieldset.choice legend { font-weight: 600; font-size: .92rem; padding: 0; margin
 .crisis a { color: var(--info); font-weight: 600; }
 details summary { cursor: pointer; }
 
+/* Snel noteren en staafjes */
+.quick-add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+.bars { display: grid; gap: 6px; margin: 6px 0 10px; }
+.bar-row { display: grid; grid-template-columns: minmax(120px, 42%) 1fr 28px; align-items: center; gap: 8px; font-size: .85rem; }
+.bar-label { color: var(--text-2); }
+.bar-track { height: 12px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; }
+.bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); }
+
 /* Afdrukken (medisch overzicht) */
 @media print {
   .topbar, .no-print, .toast, .actions { display: none !important; }

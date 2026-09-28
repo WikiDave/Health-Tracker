@@ -9,6 +9,8 @@
     welzijn: views.wellbeing,
     medicatie: views.medication,
     pijn: views.pain,
+    sport: views.sport,
+    stoelgang: views.bowel,
     bloed: views.labs,
     recepten: views.prescriptions,
     bezoeken: views.visits,

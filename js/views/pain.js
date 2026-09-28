@@ -96,7 +96,7 @@
         <div data-chart></div>
       </section>
       <h2 class="section-title">Dagboek</h2>
-      ${groups.length ? groups.map((g) => `
+      ${groups.length ? ui.collapsible(groups, (g) => `
         <article class="card item">
           <h3>${esc(formatDateLong(g.date))}</h3>
           <ul class="pain-list">${g.items.map((e) => `
@@ -110,7 +110,7 @@
               </div>
               <button class="btn small ghost" data-edit="${esc(e.id)}">Bewerken</button>
             </li>`).join('')}</ul>
-        </article>`).join('') : ui.empty('Nog niets genoteerd. Noteer pijn zodra je het voelt – dan zie je later patronen.')}`;
+        </article>`, 10, 'Oudere gegevens') : ui.empty('Nog niets genoteerd. Noteer pijn zodra je het voelt – dan zie je later patronen.')}`;
 
     chart.lineChart(el.querySelector('[data-chart]'), {
       series: [{ name: 'Pijn', color: 'var(--series-1)', points: Object.entries(perDay).map(([date, value]) => ({ date, value })) }],

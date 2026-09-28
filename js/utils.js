@@ -255,6 +255,43 @@
     return vals.length ? { avg: vals.reduce((a, b) => a + b, 0) / vals.length, n: vals.length } : null;
   }
 
+  /** Maandag van de week waarin de datum valt. */
+  function weekStart(iso) {
+    const d = parseISO(iso);
+    const dow = (d.getDay() + 6) % 7; // maandag = 0
+    return addDays(iso, -dow);
+  }
+
+  /** Beweegminuten per week (maandag als sleutel). Zware inspanning telt dubbel, zoals in de Beweegrichtlijn. */
+  function activeMinutesByWeek(sessions) {
+    const out = {};
+    for (const s of sessions) {
+      const min = parseNum(s.duration);
+      if (!s.date || min == null) continue;
+      const k = weekStart(s.date);
+      out[k] = (out[k] || 0) + (s.intensity === 'Zwaar' ? min * 2 : min);
+    }
+    return out;
+  }
+
+  /** Stoelgang-overzicht over een periode (inclusief). */
+  function bowelStats(entries, fromISO, toISOStr) {
+    const list = entries.filter((e) => e.date >= fromISO && e.date <= toISOStr);
+    const days = daysBetween(fromISO, toISOStr) + 1;
+    const types = {};
+    for (const e of list) if (e.bristol) types[e.bristol] = (types[e.bristol] || 0) + 1;
+    const typed = list.filter((e) => e.bristol);
+    return {
+      count: list.length,
+      perDay: days > 0 ? list.length / days : 0,
+      daysWithout: days - new Set(list.map((e) => e.date)).size,
+      types,
+      hard: typed.filter((e) => e.bristol <= 2).length,
+      loose: typed.filter((e) => e.bristol >= 6).length,
+      blood: list.filter((e) => e.blood).length,
+    };
+  }
+
   function sortBy(arr, key, dir = 1) {
     return [...arr].sort((a, b) => {
       const av = typeof key === 'function' ? key(a) : a[key];
@@ -268,7 +305,7 @@
     formatDate, formatDateLong, formatDateShort,
     escapeHtml, uid, parseNum, formatNum, parseTimes,
     rangeStatus, isMedActiveOn, medTimes, daysOfStockLeft, doseKey, adherence,
-    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, sortBy,
+    prescriptionStatus, visitToICS, medsToICS, minutesOf, dueDoses, vaccinationsDue, average, weekStart, activeMinutesByWeek, bowelStats, sortBy,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -30,6 +30,13 @@
       return m ? ui.badge(m[0], m[1]) : '';
     },
 
+    /** Toont de eerste `visible` items en zet de rest in een uitklapblok. */
+    collapsible(items, renderItem, visible = 10, label = 'Oudere gegevens') {
+      const head = items.slice(0, visible).map(renderItem).join('');
+      const rest = items.slice(visible);
+      return head + (rest.length ? `<details class="stopped"><summary>${esc(label)} (${rest.length} dagen)</summary>${rest.map(renderItem).join('')}</details>` : '');
+    },
+
     kv(label, value) {
       if (value == null || value === '') return '';
       return `<div class="kv"><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`;

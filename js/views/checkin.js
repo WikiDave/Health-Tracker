@@ -34,6 +34,10 @@
     { name: 'mentalNotes', label: 'Wat hield je bezig?', type: 'textarea', placeholder: 'Gedachten, zorgen, gebeurtenissen…' },
     { name: 'positive', label: 'Iets fijns van vandaag', placeholder: 'bv. wandeling in de zon, telefoontje met een vriend' },
 
+    { name: 'h6', type: 'heading', label: '❤️ Intimiteit', help: 'Blijft alleen op dit apparaat en staat niet in het medisch overzicht.' },
+    { name: 'libido', label: 'Zin in seks (libido) – 1 = geen, 5 = veel', type: 'scale', min: 1, max: 5 },
+    { name: 'intimateNotes', label: 'Klachten of opmerkingen', placeholder: 'bv. erectieproblemen, pijn, droogte, minder zin sinds nieuw medicijn' },
+
     { name: 'h4', type: 'heading', label: '📏 Metingen' },
     { name: 'systolic', label: 'Bloeddruk boven (mmHg)', type: 'number', half: true, placeholder: 'bv. 125' },
     { name: 'diastolic', label: 'Bloeddruk onder (mmHg)', type: 'number', half: true, placeholder: 'bv. 80' },
@@ -43,6 +47,7 @@
     { name: 'glucose', label: 'Bloedsuiker (mmol/L)', type: 'number', half: true },
     { name: 'oxygen', label: 'Zuurstofsaturatie (%)', type: 'number', half: true },
     { name: 'water', label: 'Water gedronken (glazen)', type: 'number', half: true },
+    { name: 'steps', label: 'Stappen', type: 'number', half: true, placeholder: 'uit je telefoon of stappenteller' },
 
     { name: 'h5', type: 'heading', label: 'Overig' },
     { name: 'symptoms', label: 'Klachten / symptomen', type: 'textarea', placeholder: 'bv. hoofdpijn, duizelig na opstaan' },
@@ -60,6 +65,8 @@
     { key: 'anxiety', label: 'Angst / onrust', unit: '/10' },
     { key: 'gloom', label: 'Somberheid', unit: '/10' },
     { key: 'focus', label: 'Concentratie', unit: '/5' },
+    { key: 'libido', label: 'Libido', unit: '/5' },
+    { key: 'steps', label: 'Stappen', unit: '' },
     { key: 'pain', label: 'Pijn', unit: '/10' },
     { key: 'sleepHours', label: 'Slaap', unit: 'uur' },
     { key: 'temperature', label: 'Temperatuur', unit: '°C' },
@@ -99,6 +106,8 @@
     if (c.anxiety != null) parts.push(`angst ${c.anxiety}/10`);
     if (c.gloom != null) parts.push(`somber ${c.gloom}/10`);
     if (c.focus) parts.push(`${FOCUS[c.focus - 1]} concentratie ${c.focus}/5`);
+    if (c.libido) parts.push(`libido ${c.libido}/5`);
+    if (c.steps) parts.push(`${Number(c.steps).toLocaleString('nl-NL')} stappen`);
     if (c.sleepHours != null) parts.push(`${formatNum(c.sleepHours)} u slaap`);
     if (c.systolic && c.diastolic) parts.push(`${c.systolic}/${c.diastolic} mmHg`);
     if (c.heartRate) parts.push(`${c.heartRate} bpm`);
@@ -116,6 +125,7 @@
     else if (c.restBreaks) html += `<p><strong>Rust:</strong> ${esc(c.restBreaks)}</p>`;
     if (c.mentalNotes) html += `<p><strong>Hield me bezig:</strong> ${esc(c.mentalNotes)}</p>`;
     if (c.positive) html += `<p>🌱 ${esc(c.positive)}</p>`;
+    if (c.intimateNotes) html += `<p><strong>Intimiteit:</strong> ${esc(c.intimateNotes)}</p>`;
     if (c.symptoms) html += `<p><strong>Klachten:</strong> ${esc(c.symptoms)}</p>`;
     if (c.notes) html += `<p class="muted">${esc(c.notes)}</p>`;
     return html;

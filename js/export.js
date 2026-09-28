@@ -48,10 +48,11 @@
         name: 'Dagelijkse check',
         columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Vermoeidheid (0-10)', 'Impact vermoeidheid', 'Uitgerust wakker (1-5)', 'Rust / dutjes',
           'Stress (0-10)', 'Angst (0-10)', 'Somberheid (0-10)', 'Concentratie (1-5)', 'Hield me bezig', 'Iets fijns',
+          'Libido (1-5)', 'Intimiteit opmerkingen', 'Stappen',
           'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
         rows: sortBy(data.checkins, 'date', -1).map((c) => [
           d(c.date), c.mood, c.energy, c.pain, c.fatigue, c.fatigueImpact, c.restedWaking, c.restBreaks,
-          c.stress, c.anxiety, c.gloom, c.focus, c.mentalNotes, c.positive, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
+          c.stress, c.anxiety, c.gloom, c.focus, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
           c.weight, c.temperature, c.glucose, c.oxygen, c.water, c.symptoms, c.notes,
         ]),
       },
@@ -68,6 +69,20 @@
         columns: ['Datum', 'Tijd', 'Pijn (0-10)', 'Waar', 'Soort', 'Hoe lang', 'Oorzaak', 'Gedaan / genomen', 'Hielp', 'Notities'],
         rows: sortBy(data.pain, (e) => e.date + (e.time || ''), -1).map((e) => [
           d(e.date), e.time, e.intensity, e.location, e.type, e.duration, e.trigger, e.relief, e.helped, e.notes,
+        ]),
+      },
+      {
+        name: 'Sport',
+        columns: ['Datum', 'Tijd', 'Activiteit', 'Duur (min)', 'Inspanning', 'Afstand (km)', 'Gem. hartslag', 'Gevoel erna (1-5)', 'Klachten', 'Notities'],
+        rows: sortBy(data.sport, (e) => e.date + (e.time || ''), -1).map((e) => [
+          d(e.date), e.time, e.activity, e.duration, e.intensity, e.distance, e.heartRate, e.feeling, e.complaints, e.notes,
+        ]),
+      },
+      {
+        name: 'Stoelgang',
+        columns: ['Datum', 'Tijd', 'Bristol-type (1-7)', 'Omschrijving', 'Hoe ging het', 'Kleur', 'Aandrang', 'Bloed', 'Slijm', 'Notities'],
+        rows: sortBy(data.bowel, (e) => e.date + (e.time || ''), -1).map((e) => [
+          d(e.date), e.time, e.bristol, HT.views.bowel.BRISTOL_SHORT[e.bristol], e.effort, e.color, Boolean(e.urgency), Boolean(e.blood), Boolean(e.mucus), e.notes,
         ]),
       },
       {

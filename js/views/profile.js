@@ -152,6 +152,11 @@
     const visitsPast = sortBy(store.list('visits').filter((v) => v.date < today), 'date', -1).slice(0, 5);
     const rx = store.list('prescriptions').filter(views.prescriptions.isOpen);
     const vacc = sortBy(store.list('vaccinations'), 'date', -1);
+    const sportRecent = store.list('sport').filter((e) => e.date >= utils.weekStart(utils.addDays(today, -21)));
+    const sportByWeek = utils.activeMinutesByWeek(sportRecent);
+    const sportWeeks = sportRecent.length ? [0, 1, 2, 3].map((i) => sportByWeek[utils.weekStart(utils.addDays(today, -7 * i))] || 0) : [];
+    const sportTop = [...new Set(sportRecent.map((e) => e.activity.trim()))].slice(0, 4);
+    const bowel = utils.bowelStats(store.list('bowel'), utils.addDays(today, -13), today);
     const wellbeing = views.wellbeing.TILES
       .map((t) => ({ t, a: utils.average(store.list('checkins'), t.key, utils.addDays(today, -29), today) }))
       .filter((x) => x.a);
@@ -195,6 +200,17 @@
         ${tests.length ? `<p class="muted">Laatste zelftests</p><dl class="kvs">
           ${tests.map((r) => ui.kv(HT.questionnaires.QUESTIONNAIRES[r.type].short, `${r.score} – ${r.level} (${formatDate(r.date)})`)).join('')}</dl>` : ''}
       </section>` : ''}
+
+      ${sportWeeks.length ? `<section class="card"><h2>Beweging</h2>
+        <p>Gemiddeld <strong>${formatNum(Math.round(sportWeeks.reduce((a, b) => a + b, 0) / 4))}</strong> beweegminuten per week over de afgelopen 4 weken
+          (${sportRecent.length} activiteiten${sportTop.length ? `: ${esc(sportTop.join(', '))}` : ''}).</p>
+      </section>` : ''}
+
+      ${bowel.count ? `<section class="card"><h2>Stoelgang (afgelopen 14 dagen)</h2><dl class="kvs">
+        ${ui.kv('Frequentie', `${formatNum(bowel.perDay.toFixed(1))}× per dag, ${bowel.daysWithout} dagen zonder`)}
+        ${ui.kv('Vorm (Bristol)', Object.entries(bowel.types).map(([t, n]) => `type ${t}: ${n}×`).join(', '))}
+        ${ui.kv('Bloed gezien', bowel.blood ? `${bowel.blood}×` : '')}
+      </dl></section>` : ''}
 
       ${vacc.length ? `<section class="card"><h2>Vaccinaties</h2><div class="table-wrap"><table>
         <thead><tr><th>Datum</th><th>Vaccinatie</th><th>Prik</th><th>Batch</th><th>Volgende</th></tr></thead>

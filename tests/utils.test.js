@@ -126,3 +126,34 @@ test('average rekent gemiddelde binnen periode en negeert lege waarden', () => {
   assert.deepEqual(u.average(c, 'fatigue', '2026-09-21', '2026-09-27'), { avg: 5, n: 2 });
   assert.equal(u.average(c, 'stress', '2026-09-01', '2026-09-30'), null);
 });
+
+test('weekStart geeft de maandag', () => {
+  assert.equal(u.weekStart('2026-09-28'), '2026-09-28'); // maandag
+  assert.equal(u.weekStart('2026-10-04'), '2026-09-28'); // zondag
+  assert.equal(u.weekStart('2026-10-01'), '2026-09-28');
+});
+
+test('activeMinutesByWeek telt zware inspanning dubbel', () => {
+  const w = u.activeMinutesByWeek([
+    { date: '2026-09-28', duration: 30, intensity: 'Matig' },
+    { date: '2026-10-03', duration: '20', intensity: 'Zwaar' },
+    { date: '2026-10-05', duration: 45, intensity: 'Licht' },
+    { date: '2026-10-05', duration: null },
+  ]);
+  assert.deepEqual(w, { '2026-09-28': 70, '2026-10-05': 45 });
+});
+
+test('bowelStats', () => {
+  const s = u.bowelStats([
+    { date: '2026-09-21', bristol: 1 },
+    { date: '2026-09-22', bristol: 4 },
+    { date: '2026-09-22', bristol: 6, blood: true },
+    { date: '2026-09-30', bristol: 4 },
+  ], '2026-09-21', '2026-09-27');
+  assert.equal(s.count, 3);
+  assert.equal(s.daysWithout, 5);
+  assert.equal(s.hard, 1);
+  assert.equal(s.loose, 1);
+  assert.equal(s.blood, 1);
+  assert.deepEqual(s.types, { 1: 1, 4: 1, 6: 1 });
+});
