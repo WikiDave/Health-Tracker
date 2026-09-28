@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gezondheid</title>
+  <meta name="description" content="Houd je gezondheid bij: medicatie, bloedonderzoeken, voorschriften, doktersbezoeken en een dagelijkse check.">
+  <meta name="theme-color" content="#2a78d6">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="#/" class="brand"><span aria-hidden="true">❤️</span> Gezondheid</a>
+    <nav class="nav" aria-label="Hoofdmenu">
+      <a href="#/"><span aria-hidden="true">🏠</span>Vandaag</a>
+      <a href="#/check"><span aria-hidden="true">📝</span>Check</a>
+      <a href="#/medicatie"><span aria-hidden="true">💊</span>Medicatie</a>
+      <a href="#/bloed"><span aria-hidden="true">🩸</span>Bloed</a>
+      <a href="#/recepten"><span aria-hidden="true">📄</span>Voorschriften</a>
+      <a href="#/bezoeken"><span aria-hidden="true">🏥</span>Bezoeken</a>
+      <a href="#/profiel"><span aria-hidden="true">👤</span>Profiel</a>
+    </nav>
+  </header>
+
+  <main id="app" class="container"></main>
+
+  <dialog id="form-dialog"></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <datalist id="lab-names">
+    <option value="Hemoglobine (Hb)">
+    <option value="Hematocriet (Ht)">
+    <option value="Erytrocyten">
+    <option value="Leukocyten">
+    <option value="Trombocyten">
+    <option value="MCV">
+    <option value="BSE">
+    <option value="CRP">
+    <option value="Glucose (nuchter)">
+    <option value="HbA1c">
+    <option value="Cholesterol totaal">
+    <option value="HDL-cholesterol">
+    <option value="LDL-cholesterol">
+    <option value="Triglyceriden">
+    <option value="Chol/HDL-ratio">
+    <option value="Kreatinine">
+    <option value="eGFR">
+    <option value="Ureum">
+    <option value="Natrium">
+    <option value="Kalium">
+    <option value="Calcium">
+    <option value="Magnesium">
+    <option value="Urinezuur">
+    <option value="ALAT (ALT)">
+    <option value="ASAT (AST)">
+    <option value="Gamma-GT">
+    <option value="Alkalisch fosfatase">
+    <option value="Bilirubine">
+    <option value="Albumine">
+    <option value="TSH">
+    <option value="Vrij T4">
+    <option value="Ferritine">
+    <option value="IJzer">
+    <option value="Vitamine B12">
+    <option value="Foliumzuur">
+    <option value="Vitamine D (25-OH)">
+    <option value="PSA">
+    <option value="INR">
+    <option value="NT-proBNP">
+    <option value="Albumine/kreatinine-ratio (urine)">
+  </datalist>
+
+  <noscript><p class="container">Deze app heeft JavaScript nodig.</p></noscript>
+
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/views/checkin.js"></script>
+  <script src="js/views/medication.js"></script>
+  <script src="js/views/labs.js"></script>
+  <script src="js/views/prescriptions.js"></script>
+  <script src="js/views/visits.js"></script>
+  <script src="js/views/profile.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
