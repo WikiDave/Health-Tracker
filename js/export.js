@@ -46,17 +46,75 @@
       },
       {
         name: 'Dagelijkse check',
-        columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
+        columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Vermoeidheid (0-10)', 'Impact vermoeidheid', 'Uitgerust wakker (1-5)', 'Rust / dutjes',
+          'Stress (0-10)', 'Angst (0-10)', 'Somberheid (0-10)', 'Concentratie (1-5)', 'Hield me bezig', 'Iets fijns',
+          'Libido (1-5)', 'Intimiteit opmerkingen', 'Stappen',
+          'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
         rows: sortBy(data.checkins, 'date', -1).map((c) => [
-          d(c.date), c.mood, c.energy, c.pain, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
+          d(c.date), c.mood, c.energy, c.pain, c.fatigue, c.fatigueImpact, c.restedWaking, c.restBreaks,
+          c.stress, c.anxiety, c.gloom, c.focus, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
           c.weight, c.temperature, c.glucose, c.oxygen, c.water, c.symptoms, c.notes,
         ]),
+      },
+      {
+        name: 'Zelftests',
+        columns: ['Datum', 'Vragenlijst', 'Score', 'Maximum', 'Niveau', ...Array.from({ length: 9 }, (_, i) => `Vraag ${i + 1} (0-3)`)],
+        rows: sortBy(data.questionnaires, 'date', -1).map((r) => {
+          const q = HT.questionnaires.QUESTIONNAIRES[r.type];
+          return [d(r.date), q ? q.short : r.type, r.score, q ? q.max : '', r.level, ...(r.answers || [])];
+        }),
       },
       {
         name: 'Pijndagboek',
         columns: ['Datum', 'Tijd', 'Pijn (0-10)', 'Waar', 'Soort', 'Hoe lang', 'Oorzaak', 'Gedaan / genomen', 'Hielp', 'Notities'],
         rows: sortBy(data.pain, (e) => e.date + (e.time || ''), -1).map((e) => [
           d(e.date), e.time, e.intensity, e.location, e.type, e.duration, e.trigger, e.relief, e.helped, e.notes,
+        ]),
+      },
+      {
+        name: 'Slaap',
+        columns: ['Nacht naar', 'Naar bed', 'Opgestaan', 'Inslapen (min)', 'Keer wakker', 'Uren geslapen', 'Dutje (min)', 'Kwaliteit (1-5)', 'Uitgerust (1-5)', 'Wakker door', 'Hulpmiddel', 'Scherm voor bed', 'Notities'],
+        rows: sortBy(data.checkins.filter(HT.views.sleep.hasSleep), 'date', -1).map((c) => [
+          d(c.date), c.bedtime, c.wakeTime, c.fallAsleep, c.wakeUps, c.sleepHours, c.nap, c.sleepQuality, c.restedWaking, c.sleepDisturbance, c.sleepAid, c.screenBeforeBed, c.dreams,
+        ]),
+      },
+      {
+        name: 'Voeding',
+        columns: ['Datum', 'Tijd', 'Maaltijd', 'Wat', 'Hoeveelheid', 'kcal', 'Waar / met wie', 'Klachten', 'Notities'],
+        rows: sortBy(data.food, (e) => e.date + (e.time || ''), -1).map((e) => [d(e.date), e.time, e.meal, e.what, e.amount, e.kcal, e.place, e.complaints, e.notes]),
+      },
+      {
+        name: 'Voeding per dag',
+        columns: ['Datum', 'Groente (g)', 'Fruit (stuks)', 'Drinken (glazen)', 'Eetlust (1-5)'],
+        rows: sortBy(data.checkins.filter((c) => ['veg', 'fruit', 'water', 'appetite'].some((k) => c[k] != null)), 'date', -1).map((c) => [d(c.date), c.veg, c.fruit, c.water, c.appetite]),
+      },
+      {
+        name: 'Middelen',
+        columns: ['Datum', 'Alcohol (glazen)', 'Wat', 'Sigaretten', 'Anders gerookt', 'Koffie (koppen)', 'Laatste koffie', 'Drugs', 'Trek (0-10)', 'Notities'],
+        rows: sortBy(data.checkins.filter(HT.views.substances.hasSubstance), 'date', -1).map((c) => [
+          d(c.date), c.alcohol, c.alcoholWhat, c.cigarettes, c.otherSmoking, c.coffee, c.lastCoffee,
+          (c.drugs || []).map((x) => x.name + (x.amount ? ` (${x.amount})` : '')).join('; '), c.craving, c.substanceNotes,
+        ]),
+      },
+      {
+        name: 'Omgeving',
+        columns: ['Datum', 'Werk', 'Uren', 'Werkdruk (0-10)', 'Buiten (min)', 'Weer', 'Feest / uitgaan', 'Mensen gezien', 'Onderweg', 'Veel alleen', 'Schermtijd (u)', 'Druk / lawaai', 'Bijzonderheden'],
+        rows: sortBy(data.checkins.filter(HT.views.environment.hasEnv), 'date', -1).map((c) => [
+          d(c.date), c.work, c.workHours, c.workLoad, c.outsideMinutes, c.weather, Boolean(c.party), Boolean(c.social), Boolean(c.travel), Boolean(c.alone), c.screenTime, Boolean(c.busyPlace), c.envNotes,
+        ]),
+      },
+      {
+        name: 'Sport',
+        columns: ['Datum', 'Tijd', 'Activiteit', 'Duur (min)', 'Inspanning', 'Afstand (km)', 'Gem. hartslag', 'Gevoel erna (1-5)', 'Klachten', 'Notities'],
+        rows: sortBy(data.sport, (e) => e.date + (e.time || ''), -1).map((e) => [
+          d(e.date), e.time, e.activity, e.duration, e.intensity, e.distance, e.heartRate, e.feeling, e.complaints, e.notes,
+        ]),
+      },
+      {
+        name: 'Stoelgang',
+        columns: ['Datum', 'Tijd', 'Bristol-type (1-7)', 'Omschrijving', 'Hoe ging het', 'Kleur', 'Aandrang', 'Bloed', 'Slijm', 'Notities'],
+        rows: sortBy(data.bowel, (e) => e.date + (e.time || ''), -1).map((e) => [
+          d(e.date), e.time, e.bristol, HT.views.bowel.BRISTOL_SHORT[e.bristol], e.effort, e.color, Boolean(e.urgency), Boolean(e.blood), Boolean(e.mucus), e.notes,
         ]),
       },
       {

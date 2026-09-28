@@ -58,7 +58,7 @@
       fresh.forEach((d) => markSent(`${today}|${d.med.id}|${d.time}`));
     }
 
-    if (s.checkinTime && now >= s.checkinTime && !store.checkinFor(today) && !sent[`${today}|checkin`]) {
+    if (s.checkinTime && now >= s.checkinTime && !store.checkinDone(today) && !sent[`${today}|checkin`]) {
       notify('📝 Dagelijkse check', 'Hoe ging het vandaag? Vul je dagelijkse check in.', `checkin-${today}`);
       markSent(`${today}|checkin`);
     }

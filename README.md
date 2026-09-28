@@ -6,6 +6,13 @@ Een app om je gezondheid bij te houden, op je telefoon of computer.
 |---|---|
 | 🏠 **Vandaag** | Overzicht van de dag: je dagelijkse check, welke medicijnen je nog moet innemen, aandachtspunten (bijna op, recept verloopt, afwijkende bloedwaarden) en je komende afspraken. |
 | 📝 **Dagelijkse check** | Stemming, energie, pijn, slaap, bloeddruk, hartslag, gewicht, temperatuur, bloedsuiker, saturatie, klachten en notities. Met grafieken van het verloop. |
+| 🧠 **Vermoeidheid & mentaal** | In de dagelijkse check houd je vermoeidheid (0–10, wat je nog kon, rust/dutjes, uitgerust wakker) en je mentale gezondheid bij (stress, angst, somberheid, concentratie, wat je bezighield, iets fijns). Ook libido (alleen op je apparaat, niet in het medisch overzicht) en stappen. Het scherm *Welzijn* toont weekgemiddelden met vergelijking, grafieken, een dagboek en zelftests (PHQ-9 voor somberheid, GAD-7 voor angst) met uitleg en hulp-informatie. |
+| 🏃 **Sport & beweging** | Activiteit, duur, inspanning, afstand, hartslag, hoe je je erna voelde en eventuele klachten. Voortgang naar de Beweegrichtlijn (150 min per week) en een grafiek per week. |
+| 🌙 **Slaap** | Slaapdagboek per nacht: bedtijd, opstaan (uren worden berekend), inslaaptijd, keer wakker, kwaliteit, wat je wakker hield, slaapmiddel en schermtijd voor bed. Gemiddelden, grafiek en verbanden (bv. koffie of schermtijd en slaapkwaliteit). |
+| 🥗 **Voeding** | Eetdagboek per maaltijd met klachten na het eten, en dagdoelen volgens de Schijf van Vijf (groente, fruit, drinken) plus eetlust. |
+| 🍷 **Middelengebruik** | Alcohol, roken, cafeïne en drugs per dag, zonder oordeel. Alcoholvrije dagen, glazen per week, teller voor stoppen met roken (dagen rookvrij, bespaard geld), verbanden met slaap, stemming en vermoeidheid, en verwijzingen naar hulp. Drugs staan alleen in het medisch overzicht als je dat aanvinkt. |
+| 🌳 **Omgeving** | Werk (soort, uren, werkdruk), tijd buiten en weer, feest/uitgaan, mensen gezien, onderweg, schermtijd en bijzonderheden. Laat zien wat samenhangt met hoe je je voelt, bijvoorbeeld de dag na een feest of op werkdagen. |
+| 🚽 **Stoelgang** | Vorm volgens de Bristol-schaal (type 1–7), hoe het ging, kleur, aandrang, bloed en slijm. Overzicht van frequentie en vorm; bloed of een afwijkende kleur geeft een waarschuwing om naar de huisarts te gaan. |
 | 💊 **Medicatie** | Medicijnen met dosis, innametijden en gebruiksaanwijzing. Innames afvinken, voorraad telt automatisch af (waarschuwing bij minder dan 7 dagen), en je ziet hoe trouw je ze inneemt. Vergeten innames worden gemarkeerd. |
 | 🔔 **Herinneringen** | Zet al je innametijden met één klik in de agenda van je telefoon (dagelijks terugkerend, met melding). Daarnaast kan de app zelf meldingen geven voor medicatie en voor je dagelijkse check. |
 | ⚡ **Pijndagboek** | Noteer pijn wanneer je het voelt: hoe erg (0–10), waar, soort, oorzaak en wat hielp. Met grafiek en overzicht (gemiddelde, hoogste, meest genoemde plek). |
@@ -59,6 +66,7 @@ js/store.js           opslag in localStorage, back-up
 js/xlsx.js            Excel-bestanden maken zonder bibliotheek (ook getest in Node)
 js/export.js          export van alle gegevens naar Excel
 js/reminders.js       meldingen voor medicatie en dagelijkse check
+js/questionnaires.js  PHQ-9 en GAD-7 met scoring (ook getest in Node)
 js/form.js            generieke formulier-dialoog
 js/chart.js           SVG-lijngrafiek met referentieband en tooltip
 js/views/*.js         de schermen
@@ -70,4 +78,4 @@ Bij een nieuwe versie: verhoog `VERSION` in `sw.js`.
 
 ---
 
-*Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112.*
+*Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112. Denk je aan zelfdoding? Bel 113 of gratis 0800-0113 (113 Zelfmoordpreventie, dag en nacht).*

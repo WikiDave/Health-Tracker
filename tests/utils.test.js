@@ -115,3 +115,83 @@ test('adherence telt innames later vandaag nog niet mee', () => {
   const log = { '2026-09-28': { 'a|08:00': 't', 'a|20:00': 't' } };
   assert.deepEqual(u.adherence(meds, log, '2026-09-28', '2026-09-28', '07:00'), { planned: 2, taken: 2, pct: 100 });
 });
+
+test('average rekent gemiddelde binnen periode en negeert lege waarden', () => {
+  const c = [
+    { date: '2026-09-20', fatigue: 8 },
+    { date: '2026-09-25', fatigue: 4 },
+    { date: '2026-09-26', fatigue: null },
+    { date: '2026-09-27', fatigue: 6 },
+  ];
+  assert.deepEqual(u.average(c, 'fatigue', '2026-09-21', '2026-09-27'), { avg: 5, n: 2 });
+  assert.equal(u.average(c, 'stress', '2026-09-01', '2026-09-30'), null);
+});
+
+test('weekStart geeft de maandag', () => {
+  assert.equal(u.weekStart('2026-09-28'), '2026-09-28'); // maandag
+  assert.equal(u.weekStart('2026-10-04'), '2026-09-28'); // zondag
+  assert.equal(u.weekStart('2026-10-01'), '2026-09-28');
+});
+
+test('activeMinutesByWeek telt zware inspanning dubbel', () => {
+  const w = u.activeMinutesByWeek([
+    { date: '2026-09-28', duration: 30, intensity: 'Matig' },
+    { date: '2026-10-03', duration: '20', intensity: 'Zwaar' },
+    { date: '2026-10-05', duration: 45, intensity: 'Licht' },
+    { date: '2026-10-05', duration: null },
+  ]);
+  assert.deepEqual(w, { '2026-09-28': 70, '2026-10-05': 45 });
+});
+
+test('bowelStats', () => {
+  const s = u.bowelStats([
+    { date: '2026-09-21', bristol: 1 },
+    { date: '2026-09-22', bristol: 4 },
+    { date: '2026-09-22', bristol: 6, blood: true },
+    { date: '2026-09-30', bristol: 4 },
+  ], '2026-09-21', '2026-09-27');
+  assert.equal(s.count, 3);
+  assert.equal(s.daysWithout, 5);
+  assert.equal(s.hard, 1);
+  assert.equal(s.loose, 1);
+  assert.equal(s.blood, 1);
+  assert.deepEqual(s.types, { 1: 1, 4: 1, 6: 1 });
+});
+
+test('sumByWeek telt per week en accepteert komma-getallen', () => {
+  assert.deepEqual(u.sumByWeek([
+    { date: '2026-09-28', alcohol: 2 },
+    { date: '2026-10-02', alcohol: '1,5' },
+    { date: '2026-10-06', alcohol: 3 },
+    { date: '2026-10-07', alcohol: null },
+  ], 'alcohol'), { '2026-09-28': 3.5, '2026-10-05': 3 });
+});
+
+test('daysSince', () => {
+  assert.equal(u.daysSince('2026-09-01', '2026-09-28'), 27);
+  assert.equal(u.daysSince('2026-09-28', '2026-09-28'), 0);
+  assert.equal(u.daysSince('2026-10-01', '2026-09-28'), null);
+  assert.equal(u.daysSince('', '2026-09-28'), null);
+});
+
+test('nextDayEffect vergelijkt de dag erna', () => {
+  const days = ['01', '02', '03', '04', '05', '06'].map((d, i) => ({ date: `2026-09-${d}`, alcohol: i % 2 ? 3 : 0 }));
+  const checks = ['02', '03', '04', '05', '06', '07'].map((d, i) => ({ date: `2026-09-${d}`, fatigue: i % 2 ? 8 : 4 }));
+  assert.deepEqual(u.nextDayEffect(days, (e) => e.alcohol > 0, checks, 'fatigue'), { withUse: 8, without: 4, n: 6 });
+  assert.equal(u.nextDayEffect(days.slice(0, 3), (e) => e.alcohol > 0, checks, 'fatigue'), null);
+});
+
+test('sleepDuration rekent over middernacht en trekt inslaaptijd af', () => {
+  assert.equal(u.sleepDuration('23:00', '07:00'), 8);
+  assert.equal(u.sleepDuration('23:30', '06:45', 30), 6.8);
+  assert.equal(u.sleepDuration('01:00', '09:00'), 8);
+  assert.equal(u.sleepDuration('', '07:00'), null);
+});
+
+test('sameDayEffect vergelijkt dagen met en zonder situatie', () => {
+  const c = [
+    { worked: true, stress: 7 }, { worked: true, stress: 5 }, { worked: true, stress: 6 },
+    { worked: false, stress: 2 }, { worked: false, stress: 3 }, { worked: false, stress: 4 }, { stress: 9, worked: null },
+  ];
+  assert.deepEqual(u.sameDayEffect(c, (x) => x.worked, 'stress'), { withIt: 6, without: 3, n: 6 });
+});

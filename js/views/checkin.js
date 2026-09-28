@@ -7,13 +7,38 @@
   const MOOD = ['😞', '🙁', '😐', '🙂', '😄'];
   const ENERGY = ['🪫', '😴', '😐', '💪', '⚡'];
 
+  const FOCUS = ['😵', '😕', '😐', '🙂', '🎯'];
+
+  const IMPACT = ['', 'Kon alles doen wat ik wilde', 'Moest het wat rustiger aan doen', 'Kon veel dingen niet doen', 'Lag vooral op bed of de bank'];
+
   const FIELDS = [
     { name: 'date', label: 'Datum', type: 'date', required: true, half: true },
+    { name: 'h1', type: 'heading', label: 'Hoe gaat het?' },
     { name: 'mood', label: 'Hoe voel je je?', type: 'scale', min: 1, max: 5, emoji: MOOD },
     { name: 'energy', label: 'Energie', type: 'scale', min: 1, max: 5, emoji: ENERGY },
     { name: 'pain', label: 'Pijn (0 = geen, 10 = ergst denkbaar)', type: 'scale', min: 0, max: 10 },
+
+    { name: 'h2', type: 'heading', label: '😴 Vermoeidheid en slaap' },
+    { name: 'fatigue', label: 'Hoe moe ben je? (0 = fit, 10 = volledig uitgeput)', type: 'scale', min: 0, max: 10 },
+    { name: 'fatigueImpact', label: 'Wat kon je vandaag door de vermoeidheid?', type: 'select', options: IMPACT },
+    { name: 'restedWaking', label: 'Uitgerust wakker geworden?', type: 'scale', min: 1, max: 5, emoji: MOOD },
     { name: 'sleepHours', label: 'Uren geslapen', type: 'number', half: true, placeholder: 'bv. 7,5' },
+    { name: 'restBreaks', label: 'Rust / dutjes overdag', half: true, placeholder: 'bv. 30 min middagdutje' },
     { name: 'sleepQuality', label: 'Slaapkwaliteit', type: 'scale', min: 1, max: 5, emoji: MOOD },
+
+    { name: 'h3', type: 'heading', label: '🧠 Mentaal' },
+    { name: 'stress', label: 'Stress (0 = ontspannen, 10 = extreem gestrest)', type: 'scale', min: 0, max: 10 },
+    { name: 'anxiety', label: 'Angst / onrust (0 = geen, 10 = heel veel)', type: 'scale', min: 0, max: 10 },
+    { name: 'gloom', label: 'Somber / neerslachtig (0 = helemaal niet, 10 = heel erg)', type: 'scale', min: 0, max: 10 },
+    { name: 'focus', label: 'Concentratie', type: 'scale', min: 1, max: 5, emoji: FOCUS },
+    { name: 'mentalNotes', label: 'Wat hield je bezig?', type: 'textarea', placeholder: 'Gedachten, zorgen, gebeurtenissen…' },
+    { name: 'positive', label: 'Iets fijns van vandaag', placeholder: 'bv. wandeling in de zon, telefoontje met een vriend' },
+
+    { name: 'h6', type: 'heading', label: '❤️ Intimiteit', help: 'Blijft alleen op dit apparaat en staat niet in het medisch overzicht.' },
+    { name: 'libido', label: 'Zin in seks (libido) – 1 = geen, 5 = veel', type: 'scale', min: 1, max: 5 },
+    { name: 'intimateNotes', label: 'Klachten of opmerkingen', placeholder: 'bv. erectieproblemen, pijn, droogte, minder zin sinds nieuw medicijn' },
+
+    { name: 'h4', type: 'heading', label: '📏 Metingen' },
     { name: 'systolic', label: 'Bloeddruk boven (mmHg)', type: 'number', half: true, placeholder: 'bv. 125' },
     { name: 'diastolic', label: 'Bloeddruk onder (mmHg)', type: 'number', half: true, placeholder: 'bv. 80' },
     { name: 'heartRate', label: 'Hartslag (slagen/min)', type: 'number', half: true },
@@ -22,6 +47,9 @@
     { name: 'glucose', label: 'Bloedsuiker (mmol/L)', type: 'number', half: true },
     { name: 'oxygen', label: 'Zuurstofsaturatie (%)', type: 'number', half: true },
     { name: 'water', label: 'Water gedronken (glazen)', type: 'number', half: true },
+    { name: 'steps', label: 'Stappen', type: 'number', half: true, placeholder: 'uit je telefoon of stappenteller' },
+
+    { name: 'h5', type: 'heading', label: 'Overig' },
     { name: 'symptoms', label: 'Klachten / symptomen', type: 'textarea', placeholder: 'bv. hoofdpijn, duizelig na opstaan' },
     { name: 'notes', label: 'Notities', type: 'textarea' },
   ];
@@ -32,6 +60,13 @@
     { key: 'heartRate', label: 'Hartslag', unit: '/min' },
     { key: 'mood', label: 'Stemming', unit: '/5' },
     { key: 'energy', label: 'Energie', unit: '/5' },
+    { key: 'fatigue', label: 'Vermoeidheid', unit: '/10' },
+    { key: 'stress', label: 'Stress', unit: '/10' },
+    { key: 'anxiety', label: 'Angst / onrust', unit: '/10' },
+    { key: 'gloom', label: 'Somberheid', unit: '/10' },
+    { key: 'focus', label: 'Concentratie', unit: '/5' },
+    { key: 'libido', label: 'Libido', unit: '/5' },
+    { key: 'steps', label: 'Stappen', unit: '' },
     { key: 'pain', label: 'Pijn', unit: '/10' },
     { key: 'sleepHours', label: 'Slaap', unit: 'uur' },
     { key: 'temperature', label: 'Temperatuur', unit: '°C' },
@@ -46,7 +81,7 @@
     date = date || todayISO();
     const existing = store.checkinFor(date);
     form.open({
-      title: existing ? 'Dagelijkse check bewerken' : 'Dagelijkse check',
+      title: store.checkinDone(date) ? 'Dagelijkse check bewerken' : 'Dagelijkse check',
       fields: FIELDS,
       values: existing || { date },
       onSubmit(values) {
@@ -54,10 +89,32 @@
         if (other && (!existing || other.id !== existing.id)) {
           return `Er is al een check voor ${formatDateLong(values.date)}. Bewerk die in de geschiedenis.`;
         }
-        store.upsert('checkins', Object.assign({}, values, existing ? { id: existing.id } : {}));
+        store.upsert('checkins', Object.assign({}, values, { completed: true }, existing ? { id: existing.id } : {}));
         ui.toast('Check opgeslagen');
       },
-      onDelete: existing ? () => store.remove('checkins', existing.id) : null,
+      onDelete: existing ? () => {
+        if (confirm('Hiermee verwijder je álles van deze dag (ook slaap, voeding, middelen en omgeving). Doorgaan?')) store.remove('checkins', existing.id);
+      } : null,
+    });
+  }
+
+  /**
+   * Formulier voor één onderdeel van een dag (slaap, voeding, middelen, omgeving).
+   * Leest en schrijft dezelfde dagrecord als de dagelijkse check; andere velden blijven ongemoeid.
+   */
+  function openDayPart({ title, fields, date, toastText, prepare }) {
+    date = date || todayISO();
+    const existing = store.checkinFor(date) || {};
+    form.open({
+      title,
+      fields: [{ name: 'date', label: 'Datum', type: 'date', required: true, half: true }, ...fields],
+      values: Object.assign({}, existing, { date }),
+      onSubmit(values) {
+        const out = prepare ? prepare(values) : values;
+        if (typeof out === 'string') return out;
+        store.mergeCheckin(values.date, out);
+        ui.toast(toastText || 'Opgeslagen');
+      },
     });
   }
 
@@ -66,7 +123,24 @@
     if (c.mood) parts.push(`${MOOD[c.mood - 1]} stemming`);
     if (c.energy) parts.push(`${ENERGY[c.energy - 1]} energie ${c.energy}/5`);
     if (c.pain != null) parts.push(`pijn ${c.pain}/10`);
-    if (c.sleepHours != null) parts.push(`${formatNum(c.sleepHours)} u slaap`);
+    if (c.fatigue != null) parts.push(`moe ${c.fatigue}/10`);
+    if (c.stress != null) parts.push(`stress ${c.stress}/10`);
+    if (c.anxiety != null) parts.push(`angst ${c.anxiety}/10`);
+    if (c.gloom != null) parts.push(`somber ${c.gloom}/10`);
+    if (c.focus) parts.push(`${FOCUS[c.focus - 1]} concentratie ${c.focus}/5`);
+    if (c.libido) parts.push(`libido ${c.libido}/5`);
+    if (c.steps) parts.push(`${Number(c.steps).toLocaleString('nl-NL')} stappen`);
+    if (c.sleepHours != null) parts.push(`😴 ${formatNum(c.sleepHours)} u slaap${c.bedtime && c.wakeTime ? ` (${c.bedtime}–${c.wakeTime})` : ''}`);
+    if (c.veg) parts.push(`🥦 ${formatNum(c.veg)} g groente`);
+    if (c.fruit) parts.push(`🍎 ${formatNum(c.fruit)} fruit`);
+    if (c.water) parts.push(`💧 ${formatNum(c.water)} glazen`);
+    if (c.alcohol) parts.push(`🍷 ${formatNum(c.alcohol)} glas alcohol`);
+    if (c.cigarettes) parts.push(`🚬 ${formatNum(c.cigarettes)} sigaretten`);
+    if (c.coffee) parts.push(`☕ ${formatNum(c.coffee)} koffie`);
+    if (Array.isArray(c.drugs) && c.drugs.length) parts.push(`💊 ${c.drugs.map((d) => d.name).join(', ')}`);
+    if (c.work && c.work !== 'Niet gewerkt') parts.push(`💼 ${c.work.toLowerCase()}${c.workHours ? ` ${formatNum(c.workHours)} u` : ''}`);
+    if (c.outsideMinutes) parts.push(`🌳 ${formatNum(c.outsideMinutes)} min buiten`);
+    if (c.party) parts.push('🎉 feest / uitgaan');
     if (c.systolic && c.diastolic) parts.push(`${c.systolic}/${c.diastolic} mmHg`);
     if (c.heartRate) parts.push(`${c.heartRate} bpm`);
     if (c.weight) parts.push(`${formatNum(c.weight)} kg`);
@@ -79,6 +153,11 @@
   function summaryHtml(c) {
     const parts = summary(c);
     let html = parts.length ? `<ul class="pills">${parts.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '';
+    if (c.fatigueImpact) html += `<p><strong>Vermoeidheid:</strong> ${esc(c.fatigueImpact.toLowerCase())}${c.restBreaks ? ` · rust: ${esc(c.restBreaks)}` : ''}</p>`;
+    else if (c.restBreaks) html += `<p><strong>Rust:</strong> ${esc(c.restBreaks)}</p>`;
+    if (c.mentalNotes) html += `<p><strong>Hield me bezig:</strong> ${esc(c.mentalNotes)}</p>`;
+    if (c.positive) html += `<p>🌱 ${esc(c.positive)}</p>`;
+    if (c.intimateNotes) html += `<p><strong>Intimiteit:</strong> ${esc(c.intimateNotes)}</p>`;
     if (c.symptoms) html += `<p><strong>Klachten:</strong> ${esc(c.symptoms)}</p>`;
     if (c.notes) html += `<p class="muted">${esc(c.notes)}</p>`;
     return html;
@@ -86,7 +165,7 @@
 
   function render(el) {
     const today = todayISO();
-    const todays = store.checkinFor(today);
+    const todays = store.checkinDone(today);
     const from = period ? addDays(today, -period + 1) : '0000';
     const inRange = store.list('checkins').filter((c) => c.date >= from);
     const history = sortBy(store.list('checkins'), 'date', -1);
@@ -141,5 +220,5 @@
     el.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openCheckin(b.dataset.edit)));
   }
 
-  HT.views.checkin = { title: 'Dagelijkse check', render, openCheckin, summaryHtml };
+  HT.views.checkin = { title: 'Dagelijkse check', render, openCheckin, openDayPart, summaryHtml, METRICS };
 })(window.HT);
