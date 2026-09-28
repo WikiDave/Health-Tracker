@@ -12,6 +12,8 @@
     {
       route: 'dagboek', icon: '📔', label: 'Dagboek', intro: 'Alles wat je dagelijks bijhoudt.',
       items: [
+        { route: 'energie', icon: '🔋', label: 'Energie', text: 'Hoe energiek je bent en waarom',
+          status: () => { const s = HT.energy.dayScore(dayRec()); return s != null ? `Vandaag ${s}/100` : 'Hoe is je energie nu?'; } },
         { route: 'welzijn', icon: '🧠', label: 'Welzijn', text: 'Vermoeidheid, stress, stemming en zelftests',
           status: () => { const c = dayRec(); return c.fatigue != null ? `Vandaag moe ${c.fatigue}/10` : ''; } },
         { route: 'slaap', icon: '🌙', label: 'Slaap', text: 'Hoe je hebt geslapen',

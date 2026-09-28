@@ -24,6 +24,15 @@ Op het startscherm staat een meter van 0 tot 100 met een label (*Goed*, *Redelij
 - Zorgwekkende signalen (bijvoorbeeld bloed bij de ontlasting, zeer hoge bloeddruk, hoge koorts, lage saturatie) staan apart onder *Let op*, met het advies om contact op te nemen met je huisarts.
 - Het is een indicatie, geen diagnose.
 
+## Energie
+
+De app vraagt een paar keer per dag met één tik hoe je energie is (🪫 😴 😐 🙂 ⚡), op het startscherm en desgewenst via een melding ('s ochtends, 's middags en 's avonds). Het scherm **🔋 Energie** legt uit **waarom** je moe of energiek bent:
+
+- **Vandaag:** je energie (0–100) tegenover je eigen gemiddelde, en welke factoren vandaag meespelen ("minder dan 7 uur geslapen – op zulke dagen heb je gemiddeld 38 punten minder energie").
+- **Wat geeft en kost jou energie:** de app vergelijkt je eigen dagen met en zonder slaaptekort, bewegen, drinken, alcohol de avond ervoor, koffie, stress, werk(druk), feest, buiten zijn, mensen zien, groente, maaltijden, pijn en schermtijd.
+- **Bloedwaarden** die vermoeidheid kunnen verklaren (Hb, ferritine, schildklier, B12/foliumzuur, vitamine D, bloedsuiker) als ze afwijken.
+- Een signaal als je al weken erg moe bent, met het advies om naar de huisarts te gaan.
+
 ## Onderdelen
 
 | Onderdeel | Wat kun je ermee |
