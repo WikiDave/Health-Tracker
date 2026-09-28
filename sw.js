@@ -1,5 +1,5 @@
 /* Service worker: maakt de app offline bruikbaar. Verhoog VERSION bij elke release. */
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE = `gezondheid-${VERSION}`;
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/styles.css',
@@ -10,7 +10,7 @@ const FILES = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -21,11 +21,12 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Eerst netwerk (zodat updates direct binnenkomen), bij geen verbinding uit de cache.
+// Eerst netwerk, zonder de browsercache (GitHub Pages cachet 10 min), zodat updates direct binnenkomen.
+// Bij geen verbinding uit de cache.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then((res) => {
         if (res.ok) {
           const copy = res.clone();

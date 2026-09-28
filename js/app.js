@@ -82,6 +82,23 @@
   render();
 
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Is er een nieuwe versie actief geworden? Dan één keer herladen, zodat je meteen de nieuwe app ziet.
+    // (Niet bij de allereerste installatie: dan was er nog geen oude versie.)
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloaded) return;
+      reloaded = true;
+      // Niet herladen midden in een formulier: wacht tot het formulier dicht is.
+      const dialog = document.getElementById('form-dialog');
+      if (dialog.open) dialog.addEventListener('close', () => location.reload(), { once: true });
+      else location.reload();
+    });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+      .then((reg) => {
+        // Controleer op updates wanneer de app weer in beeld komt.
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+      })
+      .catch(() => {});
   }
 })(window.HT);
