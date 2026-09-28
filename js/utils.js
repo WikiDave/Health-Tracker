@@ -372,5 +372,9 @@
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  else (root.HT = root.HT || {}).utils = api;
+  else {
+    root.HT = root.HT || {};
+    root.HT.utils = api;
+    root.HT.version = '6'; // gelijk houden met VERSION in sw.js
+  }
 })(typeof window !== 'undefined' ? window : globalThis);

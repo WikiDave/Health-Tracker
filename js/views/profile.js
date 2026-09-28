@@ -96,7 +96,8 @@
         <button class="btn danger ghost" data-clear>Alle gegevens wissen</button>
       </section>
 
-      <p class="muted small">Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112.</p>`;
+      <p class="muted small">Deze app vervangt geen medisch advies. Neem bij twijfel of klachten contact op met je huisarts. Bij spoed: bel 112.</p>
+      <p class="muted small">App-versie ${esc(HT.version)}</p>`;
 
     el.querySelector('[data-edit]').addEventListener('click', () => form.open({
       title: 'Profiel bewerken',
