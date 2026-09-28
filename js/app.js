@@ -23,9 +23,11 @@
     vaccinaties: views.vaccinations,
     profiel: views.profile,
     overzicht: views.overview,
+    ...HT.menu.hubRoutes,
   };
 
   const main = document.getElementById('app');
+  const subnav = document.getElementById('subnav');
 
   function parseRoute() {
     const [name = '', ...rest] = location.hash.replace(/^#\/?/, '').split('/');
@@ -36,10 +38,16 @@
     const { name, param } = parseRoute();
     const view = ROUTES[name];
     view.render(main, param);
+    subnav.innerHTML = HT.menu.subnavHtml(name);
+    // Actief onderdeel in beeld schuiven, alleen horizontaal (de pagina zelf blijft staan).
+    const row = subnav.querySelector('.subnav-row');
+    const current = subnav.querySelector('[aria-current]');
+    if (row && current) row.scrollLeft = current.offsetLeft - row.clientWidth / 2 + current.offsetWidth / 2;
     document.title = `${view.title} · Gezondheid`;
+    const top = HT.menu.topRouteOf(name);
     document.querySelectorAll('.nav a').forEach((a) => {
       const target = a.getAttribute('href').replace(/^#\/?/, '');
-      if (target === name || (name === 'overzicht' && target === 'profiel')) a.setAttribute('aria-current', 'page');
+      if (target === top) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
   }
