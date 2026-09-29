@@ -33,6 +33,13 @@ De app vraagt een paar keer per dag met één tik hoe je energie is (🪫 😴 �
 - **Bloedwaarden** die vermoeidheid kunnen verklaren (Hb, ferritine, schildklier, B12/foliumzuur, vitamine D, bloedsuiker) als ze afwijken.
 - Een signaal als je al weken erg moe bent, met het advies om naar de huisarts te gaan.
 
+## Opstaan, training en weekmenu
+
+- **☀️ Opstaan** (bij Slaap, en 's ochtends op het startscherm): hoe je je voelde, vanzelf wakker of wekker/snoozen, hoe snel je echt wakker was, wat je als eerste deed en klachten bij het opstaan. Met verbanden (bv. slaapduur, bedtijd, schermtijd) en mee in de energie-analyse en gezondheidsmeter.
+- **🏋️ Spiertraining** (bij Sport): spiergroepen en oefeningen met sets, herhalingen en gewicht. Overzicht per spiergroep (wanneer laatst getraind), vooruitgang per oefening en het advies van 2× per week spierversterkend.
+- **🏃 Conditie** (bij Sport): afstand en tempo (min/km) bij hardlopen, wandelen, fietsen en zwemmen; kilometers per week, snelste en langste loop, tempo-trend en rusthartslag.
+- **🍽️ Weekmenu** (Dagboek): gezonde recepten volgens de Schijf van Vijf, een schema per dag dat rekening houdt met je allergieën (14 EU-allergenen, ook in samengestelde woorden), eetpatroon, kookdagen (restjes op de andere dagen) en drukke dagen; begintijd koken en een kookherinnering; boodschappenlijst (kopiëren/delen); eigen recepten; 'gegeten' zet het gerecht in je eetdagboek, dat ook waarschuwt voor allergenen.
+
 ## Onderdelen
 
 | Onderdeel | Wat kun je ermee |

@@ -79,6 +79,15 @@
       }
     }
 
+    const meal = s.meal || {};
+    if (meal.cookReminder && HT.views.mealplan) {
+      const c = HT.views.mealplan.cookToday(today);
+      if (c && now >= c.start && now <= c.dinner && !sent[`${today}|cook`]) {
+        notify('🍳 Tijd om te koken', `${c.recipe.name} – duurt ongeveer ${c.recipe.minutes} minuten (eten om ${c.dinner}).`, `cook-${today}`);
+        markSent(`${today}|cook`);
+      }
+    }
+
     if (s.checkinTime && now >= s.checkinTime && !store.checkinDone(today) && !sent[`${today}|checkin`]) {
       notify('📝 Dagelijkse check', 'Hoe ging het vandaag? Vul je dagelijkse check in.', `checkin-${today}`);
       markSent(`${today}|checkin`);
