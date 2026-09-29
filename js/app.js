@@ -27,6 +27,8 @@
     vaccinaties: views.vaccinations,
     profiel: views.profile,
     overzicht: views.overview,
+    verbanden: views.insights,
+    dag: views.day,
     ...HT.menu.hubRoutes,
   };
 
@@ -42,6 +44,9 @@
     const { name, param } = parseRoute();
     const view = ROUTES[name];
     view.render(main, param);
+    // Onder elk onderdeel: waar het mee samenhangt.
+    const related = views.insights.relatedHtml(name);
+    if (related) main.insertAdjacentHTML('beforeend', related);
     subnav.innerHTML = HT.menu.subnavHtml(name);
     // Actief onderdeel in beeld schuiven, alleen horizontaal (de pagina zelf blijft staan).
     const row = subnav.querySelector('.subnav-row');

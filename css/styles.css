@@ -528,3 +528,52 @@ details summary { cursor: pointer; }
   .nav, .subnav { display: none !important; }
   body { padding-bottom: 0; }
 }
+
+/* Verbanden */
+.filter-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; margin-bottom: 6px; scrollbar-width: thin; }
+.fchip { flex: none; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none; font-size: .9rem; white-space: nowrap; }
+.fchip.active { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.insights { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 10px; }
+.insight { display: flex; gap: 10px; align-items: flex-start; }
+.insight p { margin: 0 0 4px; }
+.insight-icon { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; background: var(--surface-2); color: var(--text-2); }
+.insight.good .insight-icon { background: var(--good-bg); color: var(--good); }
+.insight.bad .insight-icon { background: var(--bad-bg); color: var(--bad); }
+.insight-body { flex: 1; min-width: 0; }
+.insight-bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin: 2px 0 4px; }
+.insight-bar span { display: block; height: 100%; background: var(--muted); border-radius: 3px; }
+.insight-bar span.good { background: var(--good); }
+.insight-bar span.bad { background: var(--bad); }
+.good-text { color: var(--good); font-size: 1rem; }
+.bad-text { color: var(--bad); font-size: 1rem; }
+.day-nav { display: flex; gap: 8px; align-items: center; }
+.day-nav input { flex: 1; max-width: 220px; }
+.day-nav .disabled { opacity: .4; pointer-events: none; }
+.day-part .card-head h2 { font-size: 1.05rem; }
+
+/* Nachtscherm (Slaapwel / 😴 / Goeiemorgen): altijd donker en gedimd, ook in licht thema */
+#night-overlay {
+  position: fixed; inset: 0; z-index: 110; background: #06070b; color: #9a9cb0; display: grid; place-items: center;
+  padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; color-scheme: dark;
+}
+.night-mode, .night-mode body { background: #06070b; }
+.night-box { width: min(440px, 100%); text-align: center; display: grid; gap: 12px; justify-items: center; }
+.night-box h2 { color: #c4c6d6; margin: 0; }
+.night-clock { font-size: clamp(3.5rem, 20vw, 6rem); font-weight: 300; font-variant-numeric: tabular-nums; margin: 0; color: #6f7290; letter-spacing: -1px; }
+.night-state { margin: 0; font-size: 1.05rem; color: #b4b6c8; }
+.night-q { margin: 6px 0 0; }
+.night-dim { color: #62647a; margin: 0; }
+.night-btn {
+  display: grid; justify-items: center; gap: 4px; width: 100%; max-width: 320px; padding: 18px; border-radius: 22px;
+  border: 1px solid #262838; background: #11131c; color: #b4b6c8; font: inherit; font-size: 1.05rem; cursor: pointer;
+}
+.night-btn span { font-size: 2rem; line-height: 1; }
+.night-btn.big { padding: 34px 18px; }
+.night-btn.big span { font-size: 3.6rem; }
+.night-btn.sun { border-color: #3a3322; color: #d8c79a; }
+.night-btn:focus-visible, .night-chip:focus-visible, .night-link:focus-visible { outline: 3px solid #5c6bd6; outline-offset: 2px; }
+.night-reasons { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.night-chip { padding: 8px 12px; border-radius: 999px; border: 1px solid #262838; background: #0d0f16; color: #9a9cb0; font: inherit; font-size: .9rem; cursor: pointer; }
+.night-chip.on { background: #262a44; border-color: #3d4270; color: #d0d2e4; }
+.night-link { background: none; border: 0; color: #7a7d98; text-decoration: underline; font: inherit; cursor: pointer; padding: 8px 4px; min-height: 44px; }
+.night-foot { margin: 0; }

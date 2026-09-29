@@ -194,7 +194,7 @@
         <h2 class="section-title">Geschiedenis</h2>
         ${history.length ? history.map((c) => `
           <article class="card item" data-date="${c.date}">
-            <div class="item-head"><h3>${esc(formatDateLong(c.date))}</h3><button class="btn small ghost" data-edit="${c.date}">Bewerken</button></div>
+            <div class="item-head"><h3>${esc(formatDateLong(c.date))}</h3><span><a class="btn small ghost" href="#/dag/${c.date}">📅 Hele dag</a> <button class="btn small ghost" data-edit="${c.date}">Bewerken</button></span></div>
             ${summaryHtml(c) || '<p class="muted">Geen waarden ingevuld.</p>'}
           </article>`).join('') : ui.empty('Nog geen checks. Begin vandaag met je eerste dagelijkse check!')}
       </section>`;

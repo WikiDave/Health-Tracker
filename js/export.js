@@ -73,10 +73,11 @@
       },
       {
         name: 'Slaap',
-        columns: ['Nacht naar', 'Naar bed', 'Opgestaan', 'Inslapen (min)', 'Keer wakker', 'Uren geslapen', 'Dutje (min)', 'Kwaliteit (1-5)', 'Uitgerust (1-5)', 'Wakker door', 'Hulpmiddel', 'Scherm voor bed', 'Notities',
+        columns: ['Nacht naar', 'Naar bed', 'Opgestaan', 'Inslapen (min)', 'Keer wakker', 'Uren geslapen', 'Dutje (min)', 'Kwaliteit (1-5)', 'Uitgerust (1-5)', 'Wakker door', 'Hulpmiddel', 'Scherm voor bed', 'Notities', 'Wakker \'s nachts (min)', 'Momenten wakker', 'Gemeten met knoppen',
           'Gevoel bij opstaan (1-5)', 'Wakker geworden', 'Gesnoozed (×)', 'Echt wakker', 'Eerste wat je deed', 'Klachten bij opstaan'],
         rows: sortBy(data.checkins.filter(HT.views.sleep.hasSleep), 'date', -1).map((c) => [
-          d(c.date), c.bedtime, c.wakeTime, c.fallAsleep, c.wakeUps, c.sleepHours, c.nap, c.sleepQuality, c.restedWaking, c.sleepDisturbance, c.sleepAid, c.screenBeforeBed, c.dreams,
+          d(c.date), c.bedtime, c.wakeTime, c.fallAsleep, c.wakeUps, c.sleepHours, c.nap, c.sleepQuality, c.restedWaking, c.sleepDisturbance, c.sleepAid, c.screenBeforeBed, c.dreams, c.nightAwakeMin,
+          (c.nightWakes || []).map((w) => `${w.time} (${w.minutes} min${w.reasons && w.reasons.length ? `, ${w.reasons.join('/').toLowerCase()}` : ''})`).join('; '), c.sleepTracked ? 'ja' : '',
           c.wakeFeeling, c.wakeMethod, c.snoozeCount, c.awakeAfter, c.morningStart, c.morningComplaints,
         ]),
       },
