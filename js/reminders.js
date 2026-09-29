@@ -122,5 +122,10 @@
   document.addEventListener('visibilitychange', check);
   setTimeout(check, 1500);
 
-  HT.reminders = { supported, permission, enable, disable, test, check };
+  /** Directe melding (alleen als meldingen zijn toegestaan). */
+  function notifyNow(title, body, tag) {
+    if (permission() === 'granted') notify(title, body, tag || `now-${Date.now()}`);
+  }
+
+  HT.reminders = { supported, permission, enable, disable, test, check, notifyNow };
 })(window.HT);

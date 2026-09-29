@@ -77,6 +77,8 @@
 
       ${views.sleep.morningCardHtml(today)}
 
+      ${views.focus.cardHtml()}
+
       ${views.energy.cardHtml()}
 
       ${views.mealplan.cardHtml(today)}
@@ -154,6 +156,7 @@
     views.energy.bindQuick(el);
     views.sleep.bindMorning(el, today);
     views.mealplan.bind(el);
+    views.focus.bindCard(el);
     el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
     el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
     el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));

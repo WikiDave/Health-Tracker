@@ -168,6 +168,34 @@ p { margin: .4rem 0; }
 
 .type-choice { display: grid; gap: 8px; }
 
+/* Focus */
+.next-task .next-title { font-size: 1.25rem; font-weight: 700; margin: 0; }
+.task-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.task-list li { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.task-main small { display: block; color: var(--text-2); margin-top: 3px; }
+.task-meta { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.task-actions { display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-start; justify-content: flex-end; max-width: 150px; }
+.task-list .progress { margin: 6px 0 2px; height: 6px; }
+.routine-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.routine-list li { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; }
+.routine-list .dose-toggle { grid-template-columns: 30px 0 1fr; }
+.routine-list li.done .dose-toggle { background: var(--good-bg); border-color: transparent; }
+.routine-list li.done .check { background: var(--good); border-color: var(--good); color: var(--surface); }
+.focus-park { display: flex; gap: 6px; margin: 8px 0; }
+.focus-park input { flex: 1; }
+.thought-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.thought-list li { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border); }
+#focus-overlay {
+  position: fixed; inset: 0; z-index: 100; background: var(--bg); display: grid; place-items: center; padding: 20px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+.focus-box { width: min(520px, 100%); text-align: center; }
+.focus-box h2 { font-size: 1.4rem; margin: 8px 0; }
+.focus-label { color: var(--muted); font-weight: 600; margin: 0; }
+.focus-step { font-size: 1.05rem; }
+.focus-time { font-size: clamp(4rem, 22vw, 7rem); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -2px; margin: 12px 0; color: var(--primary); }
+.focus-buttons { justify-content: center; }
+
 /* Weekmenu */
 .week-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -6px 0 10px; }
 .allergy-card p { margin: 2px 0; }

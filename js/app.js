@@ -9,6 +9,7 @@
     meter: views.healthmeter,
     energie: views.energy,
     weekmenu: views.mealplan,
+    focus: views.focus,
     welzijn: views.wellbeing,
     medicatie: views.medication,
     supplementen: views.supplements,
@@ -93,6 +94,7 @@
   });
 
   render();
+  HT.app = { render };
 
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     // Is er een nieuwe versie actief geworden? Dan één keer herladen, zodat je meteen de nieuwe app ziet.

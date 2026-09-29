@@ -40,6 +40,19 @@ De app vraagt een paar keer per dag met één tik hoe je energie is (🪫 😴 �
 - **🏃 Conditie** (bij Sport): afstand en tempo (min/km) bij hardlopen, wandelen, fietsen en zwemmen; kilometers per week, snelste en langste loop, tempo-trend en rusthartslag.
 - **🍽️ Weekmenu** (Dagboek): gezonde recepten volgens de Schijf van Vijf, een schema per dag dat rekening houdt met je allergieën (14 EU-allergenen, ook in samengestelde woorden), eetpatroon, kookdagen (restjes op de andere dagen) en drukke dagen; begintijd koken en een kookherinnering; boodschappenlijst (kopiëren/delen); eigen recepten; 'gegeten' zet het gerecht in je eetdagboek, dat ook waarschuwt voor allergenen.
 
+## Focus & taken (ADHD-vriendelijk)
+
+Voor als beginnen moeilijk is of je snel afgeleid raakt (Dagboek → 🎯 Focus & taken, en "Wat nu?" op het startscherm):
+
+- **Taken met een kleinste eerste stap**, optioneel in stapjes gehakt, met energie (weinig/gemiddeld/veel), duur en deadline.
+- **Wat nu?** kiest steeds **één** taak die past bij je energie van dit moment en je deadlines – geen lange lijst die je verlamt.
+- **Focustimer met de 5-minutenregel**: rustig volledig scherm met je eerste stap, "ik was afgeleid", gedachten parkeren, geluid/trilling/melding als de tijd om is, pauzetip, en daarna "stap klaar / nog 5 minuten".
+- **Gedachten parkeren** (brain dump) en later omzetten in een taak.
+- **Routines**: dagelijks, op werkdagen of wekelijks, als afvinklijst.
+- **Ik stel iets uit**: kies de reden (te groot, onduidelijk, saai, spannend, perfectionisme, moe, afgeleid, te veel) en krijg een passende tip; na een tijdje zie je je patroon.
+- Overzicht van wat je vandaag gedaan hebt en je focusminuten, en je beste moment van de dag.
+- In de dagelijkse check: **onrust** en **overprikkeling**. Gebruik je ADHD-medicatie (bv. methylfenidaat), dan zie je je concentratie op dagen mét en zonder.
+
 ## Onderdelen
 
 | Onderdeel | Wat kun je ermee |

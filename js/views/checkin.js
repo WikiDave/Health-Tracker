@@ -31,6 +31,8 @@
     { name: 'anxiety', label: 'Angst / onrust (0 = geen, 10 = heel veel)', type: 'scale', min: 0, max: 10 },
     { name: 'gloom', label: 'Somber / neerslachtig (0 = helemaal niet, 10 = heel erg)', type: 'scale', min: 0, max: 10 },
     { name: 'focus', label: 'Concentratie', type: 'scale', min: 1, max: 5, emoji: FOCUS },
+    { name: 'restless', label: 'Onrustig / rusteloos (0 = rustig, 10 = heel onrustig)', type: 'scale', min: 0, max: 10 },
+    { name: 'overstimulated', label: 'Overprikkeld (0 = niet, 10 = helemaal vol)', type: 'scale', min: 0, max: 10 },
     { name: 'mentalNotes', label: 'Wat hield je bezig?', type: 'textarea', placeholder: 'Gedachten, zorgen, gebeurtenissen…' },
     { name: 'positive', label: 'Iets fijns van vandaag', placeholder: 'bv. wandeling in de zon, telefoontje met een vriend' },
 
@@ -64,6 +66,8 @@
     { key: 'anxiety', label: 'Angst / onrust', unit: '/10' },
     { key: 'gloom', label: 'Somberheid', unit: '/10' },
     { key: 'focus', label: 'Concentratie', unit: '/5' },
+    { key: 'restless', label: 'Onrust', unit: '/10' },
+    { key: 'overstimulated', label: 'Overprikkeld', unit: '/10' },
     { key: 'libido', label: 'Libido', unit: '/5' },
     { key: 'steps', label: 'Stappen', unit: '' },
     { key: 'pain', label: 'Pijn', unit: '/10' },
@@ -127,6 +131,8 @@
     if (c.anxiety != null) parts.push(`angst ${c.anxiety}/10`);
     if (c.gloom != null) parts.push(`somber ${c.gloom}/10`);
     if (c.focus) parts.push(`${FOCUS[c.focus - 1]} concentratie ${c.focus}/5`);
+    if (c.restless != null) parts.push(`onrust ${c.restless}/10`);
+    if (c.overstimulated != null) parts.push(`overprikkeld ${c.overstimulated}/10`);
     if (c.libido) parts.push(`libido ${c.libido}/5`);
     if (c.steps) parts.push(`${Number(c.steps).toLocaleString('nl-NL')} stappen`);
     if (c.sleepHours != null) parts.push(`😴 ${formatNum(c.sleepHours)} u slaap${c.bedtime && c.wakeTime ? ` (${c.bedtime}–${c.wakeTime})` : ''}`);

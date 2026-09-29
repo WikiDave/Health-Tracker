@@ -14,7 +14,7 @@
     { key: 'energy', label: 'Energie', scale: 5, higherIsWorse: false },
   ];
 
-  const CHART_KEYS = ['fatigue', 'stress', 'anxiety', 'gloom', 'mood', 'energy', 'focus', 'libido', 'sleepHours'];
+  const CHART_KEYS = ['fatigue', 'stress', 'anxiety', 'gloom', 'mood', 'energy', 'focus', 'restless', 'overstimulated', 'libido', 'sleepHours'];
 
   let metric = 'fatigue';
   let period = 30;
