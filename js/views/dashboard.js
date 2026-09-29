@@ -81,6 +81,8 @@
 
       ${views.energy.cardHtml()}
 
+      ${views.insights.dashboardCardHtml()}
+
       ${views.mealplan.cardHtml(today)}
 
       ${isEmpty ? `<section class="card welcome">

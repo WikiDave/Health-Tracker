@@ -12,6 +12,9 @@
     {
       route: 'dagboek', icon: '📔', label: 'Dagboek', intro: 'Alles wat je dagelijks bijhoudt.',
       items: [
+        { route: 'verbanden', icon: '🔗', label: 'Verbanden', text: 'Wat met wat samenhangt, over alle onderdelen heen',
+          status: () => { const n = HT.views.insights.count(); return n ? `${n} verband${n === 1 ? '' : 'en'} gevonden` : ''; } },
+        { route: 'dag', icon: '📅', label: 'Dagoverzicht', text: 'Alles van één dag op een rij' },
         { route: 'focus', icon: '🎯', label: 'Focus & taken', text: 'Eén ding tegelijk, uitstellen doorbreken',
           status: () => { const n = store.list('tasks').filter((t) => HT.focus.isOpenToday(t, today())).length; return n ? `${n} open` : ''; } },
         { route: 'energie', icon: '🔋', label: 'Energie', text: 'Hoe energiek je bent en waarom',

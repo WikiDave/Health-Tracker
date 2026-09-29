@@ -528,3 +528,25 @@ details summary { cursor: pointer; }
   .nav, .subnav { display: none !important; }
   body { padding-bottom: 0; }
 }
+
+/* Verbanden */
+.filter-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; margin-bottom: 6px; scrollbar-width: thin; }
+.fchip { flex: none; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none; font-size: .9rem; white-space: nowrap; }
+.fchip.active { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.insights { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 10px; }
+.insight { display: flex; gap: 10px; align-items: flex-start; }
+.insight p { margin: 0 0 4px; }
+.insight-icon { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; background: var(--surface-2); color: var(--text-2); }
+.insight.good .insight-icon { background: var(--good-bg); color: var(--good); }
+.insight.bad .insight-icon { background: var(--bad-bg); color: var(--bad); }
+.insight-body { flex: 1; min-width: 0; }
+.insight-bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin: 2px 0 4px; }
+.insight-bar span { display: block; height: 100%; background: var(--muted); border-radius: 3px; }
+.insight-bar span.good { background: var(--good); }
+.insight-bar span.bad { background: var(--bad); }
+.good-text { color: var(--good); font-size: 1rem; }
+.bad-text { color: var(--bad); font-size: 1rem; }
+.day-nav { display: flex; gap: 8px; align-items: center; }
+.day-nav input { flex: 1; max-width: 220px; }
+.day-nav .disabled { opacity: .4; pointer-events: none; }
+.day-part .card-head h2 { font-size: 1.05rem; }

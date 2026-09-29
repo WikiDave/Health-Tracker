@@ -8,7 +8,7 @@ Een app om je gezondheid bij te houden, op je telefoon of computer.
 |---|---|
 | 🏠 **Vandaag** | Startscherm met je dag in één oogopslag en snelknoppen |
 | 📝 **Check** | De dagelijkse check |
-| 📔 **Dagboek** | Welzijn, Slaap, Pijn, Sport, Voeding, Drinken, Stoelgang, Middelen, Omgeving |
+| 📔 **Dagboek** | Verbanden, Dagoverzicht, Focus, Energie, Welzijn, Slaap, Pijn, Sport, Voeding, Drinken, Stoelgang, Middelen, Omgeving |
 | 💊 **Medicijnen** | Medicatie, Supplementen, Voorschriften |
 | 🏥 **Medisch** | Bloedonderzoeken, Bezoeken, Vaccinaties |
 | 👤 **Profiel** | Je gegevens, medisch overzicht, Excel-export en back-up |
@@ -52,6 +52,15 @@ Voor als beginnen moeilijk is of je snel afgeleid raakt (Dagboek → 🎯 Focus 
 - **Ik stel iets uit**: kies de reden (te groot, onduidelijk, saai, spannend, perfectionisme, moe, afgeleid, te veel) en krijg een passende tip; na een tijdje zie je je patroon.
 - Overzicht van wat je vandaag gedaan hebt en je focusminuten, en je beste moment van de dag.
 - In de dagelijkse check: **onrust** en **overprikkeling**. Gebruik je ADHD-medicatie (bv. methylfenidaat), dan zie je je concentratie op dagen mét en zonder.
+
+## Alles hangt samen (🔗 Verbanden)
+
+- **🔗 Verbanden** zet alles wat je bijhoudt per dag naast elkaar – slaap, opstaan, energie, stemming, stress, pijn, sport en krachttraining, eten, drinken, medicijnen (ook ADHD-medicatie), alcohol/koffie/roken/drugs, werk, buiten, feest, mensen, schermtijd, focus, uitstellen en stoelgang – en zoekt wat bij jou samengaat. Ook met wat je **de dag ervoor** deed (alcohol, feest, sport, werkdruk…).
+- Kies waar je naar kijkt (energie, stemming, slaap, pijn, focus, stress…) en zie wat samengaat met **beter** en wat met **slechter**, in gewone zinnen: *"Op dagen met snoozen is je energie gemiddeld 20 lager (45/100 tegen 65/100)."*
+- Pas vanaf ± 10 dagen met genoeg afwisseling; alleen duidelijke, steeds terugkerende verschillen. Een verband is geen bewijs van oorzaak.
+- **🔗 Hangt samen met…** onder elk onderdeel (slaap, sport, middelen, focus, …) laat zien waar dát onderdeel mee samenhangt.
+- **📅 Dagoverzicht**: alles van één dag op een rij, wat er anders was dan normaal en welke van jouw verbanden die dag meespeelden. Te openen vanuit Dagboek, de check-geschiedenis (*Hele dag*) en het startscherm.
+- Op het startscherm: **Wat valt op** met je twee belangrijkste verbanden.
 
 ## Onderdelen
 
