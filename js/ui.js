@@ -31,10 +31,10 @@
     },
 
     /** Toont de eerste `visible` items en zet de rest in een uitklapblok. */
-    collapsible(items, renderItem, visible = 10, label = 'Oudere gegevens') {
+    collapsible(items, renderItem, visible = 10, label = 'Oudere gegevens', unit = 'dagen') {
       const head = items.slice(0, visible).map(renderItem).join('');
       const rest = items.slice(visible);
-      return head + (rest.length ? `<details class="stopped"><summary>${esc(label)} (${rest.length} dagen)</summary>${rest.map(renderItem).join('')}</details>` : '');
+      return head + (rest.length ? `<details class="stopped"><summary>${esc(label)} (${rest.length} ${unit})</summary>${rest.map(renderItem).join('')}</details>` : '');
     },
 
     kv(label, value) {

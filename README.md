@@ -8,7 +8,7 @@ Een app om je gezondheid bij te houden, op je telefoon of computer.
 |---|---|
 | 🏠 **Vandaag** | Startscherm met je dag in één oogopslag en snelknoppen |
 | 📝 **Check** | De dagelijkse check |
-| 📔 **Dagboek** | Verbanden, Dagoverzicht, Focus, Energie, Welzijn, Slaap, Pijn, Sport, Voeding, Drinken, Stoelgang, Middelen, Omgeving |
+| 📔 **Dagboek** | Verbanden, Dagoverzicht, Focus, Energie, Welzijn, Slaap, Sociale kring, Pijn, Sport, Voeding, Drinken, Stoelgang, Middelen, Omgeving |
 | 💊 **Medicijnen** | Medicatie, Supplementen, Voorschriften |
 | 🏥 **Medisch** | Bloedonderzoeken, Bezoeken, Vaccinaties |
 | 👤 **Profiel** | Je gegevens, medisch overzicht, Excel-export en back-up |
@@ -60,6 +60,15 @@ Voor als beginnen moeilijk is of je snel afgeleid raakt (Dagboek → 🎯 Focus 
 - Tik **☀️ Goeiemorgen** als je opstaat. De app vult zelf in: bedtijd, opstaan, hoe vaak en hoe lang je wakker was, en de uren slaap (min de tijd dat je wakker lag). Daarna vraagt de app kort hoe je hebt geslapen en hoe je bent opgestaan.
 - Een korte meting overdag telt als **dutje**. Vergeten Goeiemorgen te tikken? Dan vraagt de app hoe laat je bent opgestaan.
 - Keer wakker en minuten wakker 's nachts doen mee in **Verbanden** (bv. *"Op dagen met alcohol (de dag ervoor) was je vaker wakker"*) en in de Excel-export.
+
+## 👥 Sociale kring
+
+- **Je kring**: zet de mensen om je heen erin (partner, familie, vrienden, collega's…), verdeeld over *binnenste kring*, *vrienden & familie* en *kennissen*. Per persoon kun je aangeven hoe vaak je contact wilt, en een verjaardag en telefoonnummer invullen.
+- **Contact noteren** (ook via 👥 op het startscherm): met wie, hoe (afspreken, samen iets doen, groep/feest, werk, bellen, videobellen, appen), hoe lang, of het energie gaf of kostte, en hoe fijn het was.
+- **Afgelopen 7 dagen**: dagen met contact, keer in het echt, bellen/appen, verschillende mensen, tijd samen en hoe eenzaam je je voelde. **Eenzaam (0–10)** staat ook in de dagelijkse check, en je kunt je **sociale batterij** invullen.
+- **Tijd voor contact**: wie je (volgens je eigen wens) al een tijdje niet hebt gesproken, met *📞 Bel* en *✓ Contact gehad*. **Verjaardagen** verschijnen op het startscherm.
+- **Wie geeft je energie?** De grafiek toont contact per week (in het echt tegenover op afstand).
+- Telt mee in de **gezondheidsmeter** (onderdeel Sociaal) en in **Verbanden** (bv. *"Op dagen dat je iemand in het echt zag is je stemming hoger"*). Voel je je vaak eenzaam, dan wijst de app je op De Luisterlijn (088 0767 000) en je huisarts.
 
 ## Alles hangt samen (🔗 Verbanden)
 

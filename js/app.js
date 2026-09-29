@@ -21,6 +21,7 @@
     voeding: views.nutrition,
     middelen: views.substances,
     omgeving: views.environment,
+    sociaal: views.social,
     bloed: views.labs,
     recepten: views.prescriptions,
     bezoeken: views.visits,

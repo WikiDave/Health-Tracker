@@ -577,3 +577,16 @@ details summary { cursor: pointer; }
 .night-chip.on { background: #262a44; border-color: #3d4270; color: #d0d2e4; }
 .night-link { background: none; border: 0; color: #7a7d98; text-decoration: underline; font: inherit; cursor: pointer; padding: 8px 4px; min-height: 44px; }
 .night-foot { margin: 0; }
+
+/* Sociale kring */
+.circles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 640px) { .circles { grid-template-columns: 1fr; } }
+.circle-col { border-radius: 12px; padding: 10px 12px; background: var(--surface-2); }
+.circle-col.circle-binnen { background: var(--bad-bg); }
+.circle-col.circle-midden { background: var(--info-bg); }
+.circle-col h3 { font-size: .95rem; margin: 0 0 6px; }
+.circle-col .list li { padding: 4px 0; }
+.link-btn { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--primary); cursor: pointer; text-align: left; min-height: 32px; }
+.warn-text { color: var(--warn); }
+.social-row { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.social-row .button-row { margin: 0; }

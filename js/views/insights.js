@@ -30,6 +30,7 @@
     stoelgang: ['bristol'],
     middelen: ['alcohol', 'coffee', 'cigarettes', 'drugs'],
     omgeving: ['worked', 'workLoad', 'outside', 'party', 'social', 'screenTime'],
+    sociaal: ['loneliness', 'contacts', 'inPerson', 'socialMin', 'social', 'party'],
     focus: ['focus', 'focusMin', 'tasksDone', 'procrastinated', 'restless', 'overstimulated', 'adhdMed'],
     medicatie: ['adherence', 'adhdMed'],
     check: ['mood', 'fatigue', 'steps', 'weight'],
@@ -37,7 +38,7 @@
 
   const OUTCOME_CHOICES = [
     ['energyScore', '🔋 Energie'], ['mood', '🙂 Stemming'], ['sleepQuality', '🌙 Slaapkwaliteit'], ['sleepHours', '😴 Uren slaap'],
-    ['wakeFeeling', '🌅 Opstaan'], ['wakeUps', "😴 's Nachts wakker"], ['pain', '⚡ Pijn'], ['stress', '😣 Stress'], ['anxiety', '😟 Angst/onrust'], ['gloom', '🌧 Somberheid'],
+    ['wakeFeeling', '🌅 Opstaan'], ['wakeUps', "😴 's Nachts wakker"], ['pain', '⚡ Pijn'], ['stress', '😣 Stress'], ['loneliness', '👥 Eenzaamheid'], ['anxiety', '😟 Angst/onrust'], ['gloom', '🌧 Somberheid'],
     ['focus', '🎯 Concentratie'], ['focusMin', '⏱ Focusminuten'], ['tasksDone', '✓ Taken af'], ['procrastinated', '⏳ Uitstellen'],
     ['restless', '🌀 Onrust (ADHD)'], ['overstimulated', '🔊 Overprikkeling'], ['bristol', '🚽 Stoelgang'],
   ];
@@ -163,6 +164,9 @@
       tasks.length && `<ul class="list">${tasks.map((t) => `<li>✓ ${esc(t.title)}</li>`).join('')}</ul>`,
       proc.length && `<p class="muted">${proc.length}× uitgesteld: ${esc(proc.map((p) => p.taskTitle).join(', '))}</p>`,
     ].filter(Boolean).join(''));
+    const contacts = on('contacts');
+    add('👥', 'Sociaal', '#/sociaal', (contacts.length ? `<ul class="list">${sortBy(contacts, 'time').map((x) => `<li>${x.time ? `<span class="muted">${esc(x.time)}</span> ` : ''}<strong>${esc(views.social.names(x))}</strong> · ${esc((x.type || '').toLowerCase())}${x.duration ? ` · ${formatNum(x.duration)} min` : ''}</li>`).join('')}</ul>` : '')
+      + pills([c.loneliness != null && `eenzaam ${c.loneliness}/10`, c.socialBattery && `🔋 ${c.socialBattery.toLowerCase()}`]));
     const visits = on('visits');
     add('🏥', 'Bezoeken', '#/bezoeken', visits.length ? `<ul class="list">${visits.map((v) => `<li>${esc([v.time, v.type, v.specialty, v.doctor].filter(Boolean).join(' · '))}</li>`).join('')}</ul>` : '');
     const labs = on('labs');

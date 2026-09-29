@@ -20,6 +20,7 @@
     energyScore: { label: 'energie', unit: '/100', kind: 'num', min: 0, max: 100, better: 'up', route: 'energie', group: 'energie', outcome: true },
     mood: { label: 'stemming', unit: '/5', kind: 'num', min: 1, max: 5, better: 'up', route: 'check', outcome: true },
     fatigue: { label: 'vermoeidheid', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'check', group: 'energie', outcome: true },
+    loneliness: { label: 'eenzaamheid', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'sociaal', outcome: true },
     stress: { label: 'stress', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'welzijn', outcome: true },
     anxiety: { label: 'angst/onrust', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'welzijn', outcome: true },
     gloom: { label: 'somberheid', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'welzijn', outcome: true },
@@ -53,7 +54,10 @@
     workLoad: { label: 'werkdruk', unit: '/10', kind: 'num', route: 'omgeving' },
     outside: { label: 'tijd buiten', unit: 'min', kind: 'num', route: 'omgeving' },
     party: { label: 'feest / uitgaan', kind: 'bool', route: 'omgeving' },
-    social: { label: 'mensen gezien', kind: 'bool', route: 'omgeving' },
+    social: { label: 'mensen gezien', phrase: 'dat je mensen zag', kind: 'bool', route: 'sociaal', group: 'sociaal' },
+    inPerson: { label: 'iemand in het echt gezien', phrase: 'dat je iemand in het echt zag', kind: 'bool', route: 'sociaal', group: 'sociaal' },
+    contacts: { label: 'contactmomenten', noun: 'contactmomenten', unit: '', kind: 'num', route: 'sociaal', group: 'sociaal' },
+    socialMin: { label: 'tijd met anderen', noun: 'contact', unit: 'min', kind: 'num', route: 'sociaal', group: 'sociaal' },
     screenTime: { label: 'schermtijd', unit: 'uur', kind: 'num', route: 'omgeving' },
     screenBeforeBed: { label: 'scherm voor het slapen', kind: 'bool', route: 'slaap' },
     snoozed: { label: 'snoozen', kind: 'bool', route: 'slaap', group: 'opstaan' },
@@ -68,7 +72,7 @@
     VARS[`prev_${k}`] = Object.assign({}, VARS[k], { label: `${VARS[k].label} (de dag ervoor)`, outcome: false, better: null, lagOf: k, group: VARS[k].group ? `prev_${VARS[k].group}` : undefined });
   }
 
-  const CHECK_KEYS = ['wakeUps', 'nightAwakeMin', 'mood', 'fatigue', 'stress', 'anxiety', 'gloom', 'focus', 'restless', 'overstimulated', 'sleepHours', 'sleepQuality', 'wakeFeeling', 'steps', 'veg', 'fruit', 'alcohol', 'coffee', 'cigarettes', 'workLoad', 'screenTime', 'weight'];
+  const CHECK_KEYS = ['loneliness', 'wakeUps', 'nightAwakeMin', 'mood', 'fatigue', 'stress', 'anxiety', 'gloom', 'focus', 'restless', 'overstimulated', 'sleepHours', 'sleepQuality', 'wakeFeeling', 'steps', 'veg', 'fruit', 'alcohol', 'coffee', 'cigarettes', 'workLoad', 'screenTime', 'weight'];
 
   /** Eén rij per datum met alle variabelen (null = onbekend). */
   function table(data) {
@@ -79,6 +83,7 @@
     (data.checkins || []).forEach((c) => add(c.date));
     ['sport', 'pain', 'bowel', 'food', 'focus', 'procrastination'].forEach((k) => (data[k] || []).forEach((x) => add(x.date)));
     Object.keys(data.medLog || {}).forEach(add);
+    (data.contacts || []).forEach((x) => add(x.date));
 
     const byCheck = Object.fromEntries((data.checkins || []).map((c) => [c.date, c]));
     const group = (arr) => {
@@ -92,6 +97,9 @@
     const food = group(data.food);
     const focus = group(data.focus);
     const proc = group(data.procrastination);
+    const contactsBy = group(data.contacts);
+    const firstContact = (data.contacts || []).reduce((m, x) => (!m || x.date < m ? x.date : m), null);
+    const IN_PERSON = new Set(['Afgesproken / bezoek', 'Samen iets gedaan', 'Groep / feest', 'Werk / school']);
     const doneByDate = {};
     for (const t of data.tasks || []) {
       if (t.doneAt) doneByDate[t.doneAt] = (doneByDate[t.doneAt] || 0) + 1;
@@ -116,7 +124,12 @@
       r.outside = parseNum(c.outsideMinutes);
       r.worked = c.work ? c.work !== 'Niet gewerkt' : null;
       r.party = hasEnv(c) ? Boolean(c.party) : null;
-      r.social = hasEnv(c) ? Boolean(c.social) : null;
+      const cs = contactsBy[date] || [];
+      const tracksSocial = Boolean(firstContact) && date >= firstContact && (cs.length > 0 || Object.keys(c).length > 1);
+      r.contacts = tracksSocial ? cs.length : null;
+      r.inPerson = tracksSocial ? cs.some((x) => IN_PERSON.has(x.type)) : null;
+      r.socialMin = tracksSocial ? cs.reduce((t, x) => t + (parseNum(x.duration) || 0), 0) : null;
+      r.social = hasEnv(c) || cs.length ? Boolean(c.social) || r.inPerson === true : null;
       r.drugs = Array.isArray(c.drugs) ? c.drugs.length > 0 : c.alcohol != null || c.coffee != null ? false : null;
       r.screenBeforeBed = c.screenBeforeBed ? ['Ongeveer een half uur', 'Het hele uur'].includes(c.screenBeforeBed) : null;
       r.snoozed = c.wakeMethod ? c.wakeMethod === 'Wekker – gesnoozed' : null;
@@ -227,8 +240,11 @@
     const seen = new Set();
     return out.sort((a, b) => Math.abs(b.r) - Math.abs(a.r)).filter((res) => {
       const key = [res.x, res.y].sort().join('|');
-      if (seen.has(key)) return false;
+      // Verschillende factoren die precies dezelfde dagen splitsen (bv. 'contact' en 'contactmomenten') maar één keer tonen.
+      const split = `${res.y}|${res.nWith}|${res.nWithout}|${res.withAvg.toFixed(2)}|${res.withoutAvg.toFixed(2)}`;
+      if (seen.has(key) || seen.has(split)) return false;
       seen.add(key);
+      seen.add(split);
       return true;
     });
   }
@@ -246,7 +262,7 @@
     const xv = VARS[res.x];
     const base = xv.lagOf ? VARS[xv.lagOf] : xv;
     const lag = xv.lagOf ? ' de dag ervoor' : '';
-    if (xv.kind === 'bool') return { with: `met ${xv.label}`, without: 'zonder' };
+    if (xv.kind === 'bool') return { with: xv.phrase && !xv.lagOf ? xv.phrase : `met ${xv.label}`, without: 'zonder' };
     const t = res.threshold;
     const above = res.loMax === t;
     const noun = `${base.noun || base.label}${xv.lagOf ? ' (de dag ervoor)' : ''}`;
