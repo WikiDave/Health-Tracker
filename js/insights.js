@@ -29,6 +29,8 @@
     pain: { label: 'pijn', unit: '/10', kind: 'num', min: 0, max: 10, better: 'down', route: 'pijn', outcome: true },
     sleepHours: { label: 'slaapduur', noun: 'slaap', unit: 'uur', kind: 'num', min: 3, max: 11, better: 'up', route: 'slaap', group: 'slaapduur', outcome: true },
     sleepQuality: { label: 'slaapkwaliteit', unit: '/5', kind: 'num', min: 1, max: 5, better: 'up', route: 'slaap', outcome: true },
+    wakeUps: { label: "keer wakker 's nachts", unit: '', kind: 'num', min: 0, max: 5, better: 'down', route: 'slaap', group: 'nachtwakker', outcome: true },
+    nightAwakeMin: { label: "minuten wakker 's nachts", noun: "wakker 's nachts", unit: 'min', kind: 'num', min: 0, max: 90, better: 'down', route: 'slaap', group: 'nachtwakker', outcome: true },
     wakeFeeling: { label: 'gevoel bij opstaan', unit: '/5', kind: 'num', min: 1, max: 5, better: 'up', route: 'slaap', group: 'opstaan', outcome: true },
     bristol: { noFactor: true, label: 'stoelgang (Bristol, 4 = ideaal)', unit: '', kind: 'num', min: 1, max: 7, better: null, route: 'stoelgang', outcome: true },
     focusMin: { label: 'focusminuten', noun: 'focustijd', unit: 'min', kind: 'num', min: 0, max: 120, better: 'up', route: 'focus', outcome: true },
@@ -66,7 +68,7 @@
     VARS[`prev_${k}`] = Object.assign({}, VARS[k], { label: `${VARS[k].label} (de dag ervoor)`, outcome: false, better: null, lagOf: k, group: VARS[k].group ? `prev_${VARS[k].group}` : undefined });
   }
 
-  const CHECK_KEYS = ['mood', 'fatigue', 'stress', 'anxiety', 'gloom', 'focus', 'restless', 'overstimulated', 'sleepHours', 'sleepQuality', 'wakeFeeling', 'steps', 'veg', 'fruit', 'alcohol', 'coffee', 'cigarettes', 'workLoad', 'screenTime', 'weight'];
+  const CHECK_KEYS = ['wakeUps', 'nightAwakeMin', 'mood', 'fatigue', 'stress', 'anxiety', 'gloom', 'focus', 'restless', 'overstimulated', 'sleepHours', 'sleepQuality', 'wakeFeeling', 'steps', 'veg', 'fruit', 'alcohol', 'coffee', 'cigarettes', 'workLoad', 'screenTime', 'weight'];
 
   /** Eén rij per datum met alle variabelen (null = onbekend). */
   function table(data) {

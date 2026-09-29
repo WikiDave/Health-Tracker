@@ -19,7 +19,7 @@
 
   // Welke variabelen horen bij welk scherm.
   const ROUTE_KEYS = {
-    slaap: ['sleepHours', 'sleepQuality', 'wakeFeeling', 'snoozed', 'screenBeforeBed'],
+    slaap: ['sleepHours', 'sleepQuality', 'wakeUps', 'nightAwakeMin', 'wakeFeeling', 'snoozed', 'screenBeforeBed'],
     energie: ['energyScore', 'fatigue'],
     welzijn: ['mood', 'stress', 'anxiety', 'gloom', 'fatigue'],
     pijn: ['pain'],
@@ -37,7 +37,7 @@
 
   const OUTCOME_CHOICES = [
     ['energyScore', '🔋 Energie'], ['mood', '🙂 Stemming'], ['sleepQuality', '🌙 Slaapkwaliteit'], ['sleepHours', '😴 Uren slaap'],
-    ['wakeFeeling', '🌅 Opstaan'], ['pain', '⚡ Pijn'], ['stress', '😣 Stress'], ['anxiety', '😟 Angst/onrust'], ['gloom', '🌧 Somberheid'],
+    ['wakeFeeling', '🌅 Opstaan'], ['wakeUps', "😴 's Nachts wakker"], ['pain', '⚡ Pijn'], ['stress', '😣 Stress'], ['anxiety', '😟 Angst/onrust'], ['gloom', '🌧 Somberheid'],
     ['focus', '🎯 Concentratie'], ['focusMin', '⏱ Focusminuten'], ['tasksDone', '✓ Taken af'], ['procrastinated', '⏳ Uitstellen'],
     ['restless', '🌀 Onrust (ADHD)'], ['overstimulated', '🔊 Overprikkeling'], ['bristol', '🚽 Stoelgang'],
   ];
@@ -128,7 +128,7 @@
 
     add('🌙', 'Slaap', '#/slaap', pills([
       c.sleepHours != null && `${formatNum(c.sleepHours)} uur geslapen`, (c.bedtime || c.wakeTime) && `${c.bedtime || '?'} – ${c.wakeTime || '?'}`,
-      c.sleepQuality != null && `kwaliteit ${c.sleepQuality}/5`, c.wakeFeeling != null && `opstaan ${c.wakeFeeling}/5`, c.wakeMethod, c.screenBeforeBed && `scherm voor bed: ${c.screenBeforeBed.toLowerCase()}`,
+      c.sleepQuality != null && `kwaliteit ${c.sleepQuality}/5`, c.wakeUps != null && c.wakeUps !== '' && `${c.wakeUps}× wakker${c.nightAwakeMin ? ` (${c.nightAwakeMin} min)` : ''}`, c.sleepTracked && '⏱ gemeten', c.wakeFeeling != null && `opstaan ${c.wakeFeeling}/5`, c.wakeMethod, c.screenBeforeBed && `scherm voor bed: ${c.screenBeforeBed.toLowerCase()}`,
     ]));
     const energy = HT.energy.dayScore(c);
     const log = Array.isArray(c.energyLog) ? sortBy(c.energyLog, 'time') : [];

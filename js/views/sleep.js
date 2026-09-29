@@ -110,6 +110,7 @@
     const hours = average(checks, 'sleepHours', addDays(today, -6), today);
     const quality = average(checks, 'sleepQuality', addDays(today, -6), today);
     const wakeUps = average(checks, 'wakeUps', addDays(today, -6), today);
+    const awake = average(checks, 'nightAwakeMin', addDays(today, -6), today);
     const bed = avgClock(week.map((c) => c.bedtime), true);
     const wake = avgClock(week.map((c) => c.wakeTime), false);
     const lastNight = store.checkinFor(today);
@@ -146,6 +147,7 @@
     el.innerHTML = `
       ${ui.pageHead('Slaap', `<button class="btn primary" data-add>${lastNight && hasSleep(lastNight) ? 'Afgelopen nacht bewerken' : '+ Afgelopen nacht'}</button>
         <button class="btn ghost" data-other>Andere nacht</button>`)}
+      ${HT.views.night.cardHtml(true)}
       <section class="card">
         <h2>Afgelopen 7 nachten</h2>
         <div class="stats">
@@ -154,6 +156,7 @@
           <div><span class="stat-value">${bed || '–'}</span><span class="stat-label">gem. naar bed</span></div>
           <div><span class="stat-value">${wake || '–'}</span><span class="stat-label">gem. opgestaan</span></div>
           <div><span class="stat-value">${wakeUps ? formatNum(wakeUps.avg.toFixed(1)) : '–'}</span><span class="stat-label">keer wakker per nacht</span></div>
+          ${awake ? `<div><span class="stat-value">${formatNum(Math.round(awake.avg))}<small> min</small></span><span class="stat-label">'s nachts wakker (gemeten)</span></div>` : ''}
         </div>
         ${insights.map((i) => `<p>💡 ${i}</p>`).join('')}
         <p class="muted small">Volwassenen hebben meestal 7 tot 9 uur slaap nodig. Vaste bed- en opstatijden, weinig schermen en geen cafeïne of alcohol in de avond helpen. Slaap je al weken slecht? Bespreek het met je huisarts.</p>
@@ -188,9 +191,11 @@
             ${c.sleepQuality ? `<li>${FACE[c.sleepQuality - 1]} kwaliteit ${c.sleepQuality}/5</li>` : ''}
             ${c.restedWaking ? `<li>uitgerust ${c.restedWaking}/5</li>` : ''}
             ${c.fallAsleep ? `<li>inslapen ${formatNum(c.fallAsleep)} min</li>` : ''}
-            ${c.wakeUps != null && c.wakeUps !== '' ? `<li>${formatNum(c.wakeUps)}× wakker</li>` : ''}
+            ${c.wakeUps != null && c.wakeUps !== '' ? `<li>${formatNum(c.wakeUps)}× wakker${c.nightAwakeMin ? ` (${formatNum(c.nightAwakeMin)} min)` : ''}</li>` : ''}
+            ${c.sleepTracked ? '<li>⏱ gemeten</li>' : ''}
             ${c.nap ? `<li>dutje ${formatNum(c.nap)} min</li>` : ''}
           </ul>
+          ${(c.nightWakes || []).length ? `<p class="small muted">😴 ${c.nightWakes.map((w) => `${esc(w.time)} ${w.minutes} min${w.reasons && w.reasons.length ? ` (${esc(w.reasons.join(', ').toLowerCase())})` : ''}`).join(' · ')}</p>` : ''}
           ${c.sleepDisturbance ? `<p><strong>Wakker door:</strong> ${esc(c.sleepDisturbance)}</p>` : ''}
           ${c.sleepAid || c.screenBeforeBed ? `<p class="muted">${esc([c.sleepAid ? `Hulpmiddel: ${c.sleepAid}` : '', c.screenBeforeBed ? `Scherm voor bed: ${c.screenBeforeBed.toLowerCase()}` : ''].filter(Boolean).join(' · '))}</p>` : ''}
           ${c.dreams ? `<p class="muted">${esc(c.dreams)}</p>` : ''}
@@ -206,11 +211,12 @@
     });
 
     el.querySelector('[data-add]').addEventListener('click', () => openSleep(today));
+    HT.views.night.bindCard(el);
     el.querySelector('[data-other]').addEventListener('click', () => openSleep(addDays(today, -1)));
     el.querySelector('[data-wake-open]').addEventListener('click', () => openWake(today));
     el.querySelector('[data-period]').addEventListener('change', (e) => { period = Number(e.target.value); render(el); });
     el.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openSleep(b.dataset.edit)));
   }
 
-  HT.views.sleep = { title: 'Slaap', render, openSleep, openWake, hasSleep, morningCardHtml, bindMorning };
+  HT.views.sleep = { title: 'Slaap', render, openSleep, openWake, hasSleep, morningCardHtml, bindMorning, FIELDS, WAKE_FIELDS };
 })(window.HT);

@@ -73,6 +73,8 @@
         ${quit ? `<p>${ui.badge(`🚭 ${quit.days} dagen rookvrij`, 'good')}</p>` : ''}
       </div>
 
+      ${views.night.cardHtml()}
+
       ${views.healthmeter.cardHtml()}
 
       ${views.sleep.morningCardHtml(today)}
@@ -159,6 +161,7 @@
     views.sleep.bindMorning(el, today);
     views.mealplan.bind(el);
     views.focus.bindCard(el);
+    views.night.bindCard(el);
     el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
     el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
     el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));

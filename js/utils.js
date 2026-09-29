@@ -391,6 +391,6 @@
   else {
     root.HT = root.HT || {};
     root.HT.utils = api;
-    root.HT.version = '14'; // gelijk houden met VERSION in sw.js
+    root.HT.version = '15'; // gelijk houden met VERSION in sw.js
   }
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -53,6 +53,14 @@ Voor als beginnen moeilijk is of je snel afgeleid raakt (Dagboek → 🎯 Focus 
 - Overzicht van wat je vandaag gedaan hebt en je focusminuten, en je beste moment van de dag.
 - In de dagelijkse check: **onrust** en **overprikkeling**. Gebruik je ADHD-medicatie (bv. methylfenidaat), dan zie je je concentratie op dagen mét en zonder.
 
+## 🌙 Slaapwel en ☀️ Goeiemorgen
+
+- Tik **🌙 Slaapwel** als je gaat slapen (op het startscherm vanaf 19:00, en altijd bij Slaap). Het scherm wordt een rustig, donker **nachtscherm** met de klok.
+- Even wakker 's nachts? Tik **😴 Even wakker**. Als je wilt, geef je aan wat je wakker hield (plassen, piekeren, pijn, lawaai…). Tik daarna **💤 Weer slapen**. Vergeet je dat, dan tellen we hooguit 30 minuten wakker.
+- Tik **☀️ Goeiemorgen** als je opstaat. De app vult zelf in: bedtijd, opstaan, hoe vaak en hoe lang je wakker was, en de uren slaap (min de tijd dat je wakker lag). Daarna vraagt de app kort hoe je hebt geslapen en hoe je bent opgestaan.
+- Een korte meting overdag telt als **dutje**. Vergeten Goeiemorgen te tikken? Dan vraagt de app hoe laat je bent opgestaan.
+- Keer wakker en minuten wakker 's nachts doen mee in **Verbanden** (bv. *"Op dagen met alcohol (de dag ervoor) was je vaker wakker"*) en in de Excel-export.
+
 ## Alles hangt samen (🔗 Verbanden)
 
 - **🔗 Verbanden** zet alles wat je bijhoudt per dag naast elkaar – slaap, opstaan, energie, stemming, stress, pijn, sport en krachttraining, eten, drinken, medicijnen (ook ADHD-medicatie), alcohol/koffie/roken/drugs, werk, buiten, feest, mensen, schermtijd, focus, uitstellen en stoelgang – en zoekt wat bij jou samengaat. Ook met wat je **de dag ervoor** deed (alcohol, feest, sport, werkdruk…).
