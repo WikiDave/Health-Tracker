@@ -47,12 +47,12 @@
       {
         name: 'Dagelijkse check',
         columns: ['Datum', 'Stemming (1-5)', 'Energie (1-5)', 'Pijn (0-10)', 'Vermoeidheid (0-10)', 'Impact vermoeidheid', 'Uitgerust wakker (1-5)', 'Rust / dutjes',
-          'Stress (0-10)', 'Angst (0-10)', 'Somberheid (0-10)', 'Concentratie (1-5)', 'Hield me bezig', 'Iets fijns',
+          'Stress (0-10)', 'Angst (0-10)', 'Somberheid (0-10)', 'Concentratie (1-5)', 'Onrust (0-10)', 'Overprikkeld (0-10)', 'Hield me bezig', 'Iets fijns',
           'Libido (1-5)', 'Intimiteit opmerkingen', 'Stappen',
           'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
         rows: sortBy(data.checkins, 'date', -1).map((c) => [
           d(c.date), c.mood, c.energy, c.pain, c.fatigue, c.fatigueImpact, c.restedWaking, c.restBreaks,
-          c.stress, c.anxiety, c.gloom, c.focus, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
+          c.stress, c.anxiety, c.gloom, c.focus, c.restless, c.overstimulated, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
           c.weight, c.temperature, c.glucose, c.oxygen, c.water, c.symptoms, c.notes,
         ]),
       },
@@ -106,6 +106,21 @@
         name: 'Drinken per dag',
         columns: ['Datum', 'Totaal (ml)', 'Kleur urine'],
         rows: sortBy(data.checkins.filter((c) => utils.fluidMl(c) != null || c.urineColor), 'date', -1).map((c) => [d(c.date), utils.fluidMl(c), c.urineColor]),
+      },
+      {
+        name: 'Taken',
+        columns: ['Taak', 'Eerste stap', 'Stappen', 'Energie', 'Minuten', 'Deadline', 'Herhalen', 'Uitgesteld (×)', 'Klaar op', 'Waarom belangrijk'],
+        rows: data.tasks.map((t) => [t.title, t.firstStep, (t.steps || []).map((s) => `${s.done ? '✓' : '☐'} ${s.text}`).join('; '), t.energy, t.minutes, d(t.deadline), t.repeat, t.postponed, d(t.doneAt || t.lastDone), t.why]),
+      },
+      {
+        name: 'Focus',
+        columns: ['Datum', 'Start', 'Gepland (min)', 'Gedaan (min)', 'Afgemaakt', 'Keer afgeleid', 'Taak'],
+        rows: sortBy(data.focus, (s) => s.date + (s.start || ''), -1).map((s) => [d(s.date), s.start, s.planned, s.actual, Boolean(s.completed), s.distractions, (data.tasks.find((t) => t.id === s.taskId) || {}).title]),
+      },
+      {
+        name: 'Uitstel',
+        columns: ['Datum', 'Tijd', 'Taak', 'Redenen', 'Toelichting'],
+        rows: sortBy(data.procrastination, (e) => e.date + (e.time || ''), -1).map((e) => [d(e.date), e.time, e.taskTitle, (e.reasons || []).map((k) => (HT.focus.REASONS.find((r) => r.key === k) || {}).label).join(', '), e.note]),
       },
       {
         name: 'Weekmenu',
