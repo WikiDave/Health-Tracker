@@ -73,9 +73,11 @@
       },
       {
         name: 'Slaap',
-        columns: ['Nacht naar', 'Naar bed', 'Opgestaan', 'Inslapen (min)', 'Keer wakker', 'Uren geslapen', 'Dutje (min)', 'Kwaliteit (1-5)', 'Uitgerust (1-5)', 'Wakker door', 'Hulpmiddel', 'Scherm voor bed', 'Notities'],
+        columns: ['Nacht naar', 'Naar bed', 'Opgestaan', 'Inslapen (min)', 'Keer wakker', 'Uren geslapen', 'Dutje (min)', 'Kwaliteit (1-5)', 'Uitgerust (1-5)', 'Wakker door', 'Hulpmiddel', 'Scherm voor bed', 'Notities',
+          'Gevoel bij opstaan (1-5)', 'Wakker geworden', 'Gesnoozed (×)', 'Echt wakker', 'Eerste wat je deed', 'Klachten bij opstaan'],
         rows: sortBy(data.checkins.filter(HT.views.sleep.hasSleep), 'date', -1).map((c) => [
           d(c.date), c.bedtime, c.wakeTime, c.fallAsleep, c.wakeUps, c.sleepHours, c.nap, c.sleepQuality, c.restedWaking, c.sleepDisturbance, c.sleepAid, c.screenBeforeBed, c.dreams,
+          c.wakeFeeling, c.wakeMethod, c.snoozeCount, c.awakeAfter, c.morningStart, c.morningComplaints,
         ]),
       },
       {
@@ -106,6 +108,15 @@
         rows: sortBy(data.checkins.filter((c) => utils.fluidMl(c) != null || c.urineColor), 'date', -1).map((c) => [d(c.date), utils.fluidMl(c), c.urineColor]),
       },
       {
+        name: 'Weekmenu',
+        columns: ['Datum', 'Maaltijd', 'Gerecht', 'Koken / restje', 'Porties'],
+        rows: Object.values(data.mealPlans || {}).flatMap((plan) => plan.days.flatMap((day) => HT.recipes.MEALS.filter((m) => day[m]).map((m) => {
+          const x = day[m];
+          const r = x.recipe && [...HT.recipes.RECIPES, ...data.recipes].find((y) => y.id === x.recipe);
+          return [d(day.date), HT.recipes.MEAL_LABEL[m], r ? r.name : x.text || '', x.leftoverOf ? 'restje' : x.cook ? 'koken' : '', x.portions || ''];
+        }))).sort((a, b) => (a[0].date < b[0].date ? 1 : -1)),
+      },
+      {
         name: 'Middelen',
         columns: ['Datum', 'Alcohol (glazen)', 'Wat', 'Sigaretten', 'Anders gerookt', 'Koffie (koppen)', 'Laatste koffie', 'Drugs', 'Trek (0-10)', 'Notities'],
         rows: sortBy(data.checkins.filter(HT.views.substances.hasSubstance), 'date', -1).map((c) => [
@@ -122,10 +133,18 @@
       },
       {
         name: 'Sport',
-        columns: ['Datum', 'Tijd', 'Activiteit', 'Duur (min)', 'Inspanning', 'Afstand (km)', 'Gem. hartslag', 'Gevoel erna (1-5)', 'Klachten', 'Notities'],
-        rows: sortBy(data.sport, (e) => e.date + (e.time || ''), -1).map((e) => [
-          d(e.date), e.time, e.activity, e.duration, e.intensity, e.distance, e.heartRate, e.feeling, e.complaints, e.notes,
-        ]),
+        columns: ['Datum', 'Tijd', 'Soort', 'Activiteit', 'Duur (min)', 'Inspanning', 'Afstand (km)', 'Tempo (min/km)', 'Gem. hartslag', 'Spiergroepen', 'Oefeningen', 'Gevoel erna (1-5)', 'Klachten', 'Notities'],
+        rows: sortBy(data.sport, (e) => e.date + (e.time || ''), -1).map((e) => {
+          const T = HT.training;
+          const kind = T.kindOf(e);
+          const p = T.pace(e);
+          return [
+            d(e.date), e.time, kind, e.activity, e.duration, e.intensity, e.distance, p ? Math.round(p * 100) / 100 : '', e.heartRate,
+            kind === 'Krachttraining' ? T.musclesOf(e).join(', ') : '',
+            (e.exercises || []).map((x) => `${x.name} ${x.sets || ''}×${x.reps || ''}${x.weight ? ` @ ${x.weight} kg` : ''}`).join('; '),
+            e.feeling, e.complaints, e.notes,
+          ];
+        }),
       },
       {
         name: 'Stoelgang',

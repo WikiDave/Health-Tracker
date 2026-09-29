@@ -8,6 +8,7 @@
     check: views.checkin,
     meter: views.healthmeter,
     energie: views.energy,
+    weekmenu: views.mealplan,
     welzijn: views.wellbeing,
     medicatie: views.medication,
     supplementen: views.supplements,

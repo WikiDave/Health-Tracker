@@ -41,7 +41,8 @@
       values: entry || { date: todayISO(), time: nowTime(), meal: defaultMeal() },
       onSubmit(values) {
         store.upsert('food', Object.assign({}, values, entry ? { id: entry.id } : {}));
-        ui.toast('Maaltijd opgeslagen');
+        const hits = HT.recipes.allergensInText(`${values.what} ${values.notes || ''}`, HT.views.mealplan.profile());
+        ui.toast(hits.length ? `⚠️ Let op: dit bevat mogelijk ${hits.join(', ')}` : 'Maaltijd opgeslagen');
       },
       onDelete: entry ? () => store.remove('food', entry.id) : null,
     });
@@ -89,7 +90,7 @@
     for (const g of groups) g.items = sortBy(g.items, (e) => e.time || '');
 
     el.innerHTML = `
-      ${ui.pageHead('Voeding', '<button class="btn primary" data-add>+ Eten noteren</button>')}
+      ${ui.pageHead('Voeding', '<button class="btn primary" data-add>+ Eten noteren</button><a class="btn ghost" href="#/weekmenu">🍽️ Weekmenu</a>')}
       <section class="card">
         <div class="card-head"><h2>Vandaag</h2><button class="btn small ghost" data-goals>Groente en fruit invullen</button></div>
         ${goalsHtml(check)}

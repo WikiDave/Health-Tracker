@@ -35,6 +35,13 @@
       else if (v < 7) { d.bad.push(`Je slaapt gemiddeld ${r1(v)} uur; 7 tot 9 uur wordt aanbevolen.`); d.tips.push('Probeer vaste bed- en opstatijden en een uur zonder scherm voor het slapen.'); }
       else d.bad.push(`Je slaapt gemiddeld ${r1(v)} uur – dat is veel. Lang slapen kan een teken zijn van vermoeidheid of somberheid.`);
     }
+    const wf = average(data.checkins, 'wakeFeeling', from, today);
+    if (wf && wf.n >= 2) {
+      d.parts.push(((wf.avg - 1) / 4) * 100);
+      if (wf.avg >= 3.5) d.good.push(`Je staat meestal goed op (${r1(wf.avg)}/5).`);
+      else if (wf.avg <= 2.5) { d.bad.push(`Je staat vaak moeizaam op (${r1(wf.avg)}/5).`); d.tips.push('Vaste opstatijd, niet snoozen en meteen daglicht helpen om frisser op te staan.'); }
+      else d.mid.push(`Opstaan gaat wisselend (${r1(wf.avg)}/5).`);
+    }
     if (q && q.n >= 2) {
       d.parts.push(((q.avg - 1) / 4) * 100);
       if (q.avg >= 3.5) d.good.push(`Je slaapkwaliteit is goed (${r1(q.avg)}/5).`);
@@ -54,6 +61,13 @@
       d.parts.push(clamp((min / 150) * 100));
       if (min >= 150) d.good.push(`Je bewoog ${formatNum(Math.round(min))} minuten in de afgelopen 7 dagen – de Beweegrichtlijn (150 min) gehaald.`);
       else { d.bad.push(`Je bewoog ${formatNum(Math.round(min))} van de aanbevolen 150 minuten in de afgelopen 7 dagen.`); d.tips.push(`Nog ${formatNum(Math.round(150 - min))} minuten: bijvoorbeeld elke dag een stevige wandeling van 20 minuten.`); }
+    }
+    const tr = typeof module !== 'undefined' && module.exports ? require('./training.js') : root.HT.training;
+    if (data.sport.some((s) => tr.kindOf(s) === 'Krachttraining')) {
+      const days = tr.strengthDays(data.sport, today);
+      d.parts.push(clamp((days / 2) * 100));
+      if (days >= 2) d.good.push(`Je deed ${days}× krachttraining deze week (advies: minstens 2×).`);
+      else { d.bad.push(`Je deed ${days}× krachttraining in de afgelopen 7 dagen; minstens 2× is het advies.`); d.tips.push('Plan twee korte krachtmomenten per week, bijvoorbeeld squats, push-ups en plank thuis.'); }
     }
     if (steps && steps.n >= 2) {
       d.parts.push(clamp((steps.avg / 8000) * 100));

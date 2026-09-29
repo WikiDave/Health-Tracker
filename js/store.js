@@ -4,7 +4,7 @@
   const { uid, doseKey, parseNum } = HT.utils;
 
   const KEY = 'health-tracker-v1';
-  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel', 'food'];
+  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel', 'food', 'recipes'];
 
   function empty() {
     return {
@@ -22,6 +22,8 @@
       sport: [],
       bowel: [],
       food: [],
+      recipes: [],
+      mealPlans: {},
       settings: {},
     };
   }
@@ -32,6 +34,7 @@
     if (!data.profile || typeof data.profile !== 'object') data.profile = {};
     if (!data.medLog || typeof data.medLog !== 'object') data.medLog = {};
     if (!data.settings || typeof data.settings !== 'object') data.settings = {};
+    if (!data.mealPlans || typeof data.mealPlans !== 'object') data.mealPlans = {};
     return data;
   }
 
@@ -44,14 +47,15 @@
 
   const listeners = new Set();
 
-  function save() {
+  /** Slaat op. Met silent = true wordt het scherm niet opnieuw getekend (bv. bij het afvinken van boodschappen). */
+  function save(silent) {
     data.updatedAt = new Date().toISOString();
     try {
       localStorage.setItem(KEY, JSON.stringify(data));
     } catch (e) {
       alert('Opslaan is mislukt: ' + e.message);
     }
-    listeners.forEach((fn) => fn());
+    if (!silent) listeners.forEach((fn) => fn());
   }
 
   const store = {
@@ -101,9 +105,15 @@
       save();
     },
 
-    saveSettings(settings) {
-      data.settings = Object.assign({}, data.settings, settings);
+    /** Slaat het weekmenu van een week op (sleutel: maandag van die week). */
+    saveMealPlan(weekStart, plan) {
+      data.mealPlans[weekStart] = plan;
       save();
+    },
+
+    saveSettings(settings, silent) {
+      data.settings = Object.assign({}, data.settings, settings);
+      save(silent);
     },
 
     checkinFor(date) {

@@ -1,12 +1,12 @@
 /* Service worker: maakt de app offline bruikbaar. Verhoog VERSION bij elke release. */
-const VERSION = 'v11';
+const VERSION = 'v12';
 const CACHE = `gezondheid-${VERSION}`;
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/styles.css',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
-  'js/utils.js', 'js/store.js', 'js/ui.js', 'js/form.js', 'js/chart.js', 'js/questionnaires.js', 'js/healthscore.js', 'js/energy.js', 'js/xlsx.js', 'js/export.js', 'js/reminders.js',
+  'js/utils.js', 'js/store.js', 'js/ui.js', 'js/form.js', 'js/chart.js', 'js/questionnaires.js', 'js/healthscore.js', 'js/energy.js', 'js/training.js', 'js/recipes.js', 'js/xlsx.js', 'js/export.js', 'js/reminders.js',
   'js/views/checkin.js', 'js/views/wellbeing.js', 'js/views/medication.js', 'js/views/labs.js', 'js/views/prescriptions.js',
-  'js/views/visits.js', 'js/views/pain.js', 'js/views/vaccinations.js', 'js/views/sport.js', 'js/views/bowel.js', 'js/views/sleep.js', 'js/views/nutrition.js', 'js/views/hydration.js', 'js/views/substances.js', 'js/views/environment.js', 'js/views/profile.js', 'js/views/healthmeter.js', 'js/views/energy.js', 'js/views/dashboard.js', 'js/menu.js', 'js/app.js',
+  'js/views/visits.js', 'js/views/pain.js', 'js/views/vaccinations.js', 'js/views/sport.js', 'js/views/bowel.js', 'js/views/sleep.js', 'js/views/nutrition.js', 'js/views/hydration.js', 'js/views/substances.js', 'js/views/environment.js', 'js/views/profile.js', 'js/views/mealplan.js', 'js/views/healthmeter.js', 'js/views/energy.js', 'js/views/dashboard.js', 'js/menu.js', 'js/app.js',
 ];
 
 self.addEventListener('install', (e) => {

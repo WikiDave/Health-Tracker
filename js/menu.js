@@ -24,6 +24,8 @@
           status: () => `${formatNum(views.sport.thisWeek(today()))} van 150 min deze week` },
         { route: 'voeding', icon: '🥗', label: 'Voeding', text: 'Eetdagboek, groente en fruit',
           status: () => { const n = store.list('food').filter((e) => e.date === today()).length; return n ? `Vandaag ${n} maaltijd${n === 1 ? '' : 'en'}` : ''; } },
+        { route: 'weekmenu', icon: '🍽️', label: 'Weekmenu', text: 'Wat je eet, wanneer je kookt, boodschappen',
+          status: () => { const c = views.mealplan.cookToday(today()); return c ? `🍳 Vandaag koken om ${c.start}` : ''; } },
         { route: 'drinken', icon: '💧', label: 'Drinken', text: 'Hoeveel je drinkt',
           status: () => `Vandaag ${formatNum(utils.fluidMl(dayRec()) || 0)} / ${formatNum(views.hydration.settings().goal)} ml` },
         { route: 'stoelgang', icon: '🚽', label: 'Stoelgang', text: 'Bristol-schaal en bijzonderheden',
