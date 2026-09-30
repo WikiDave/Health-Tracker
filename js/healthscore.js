@@ -252,6 +252,33 @@
     return finish(d);
   }
 
+  function social(data, today) {
+    const d = domain('social', 'Sociaal', '👥', 10, 'sociaal');
+    const from = addDays(today, -6);
+    const contacts = data.contacts || [];
+    const IN_PERSON = new Set(['Afgesproken / bezoek', 'Samen iets gedaan', 'Groep / feest', 'Werk / school']);
+    if (contacts.length) {
+      const recent = contacts.filter((c) => c.date >= from && c.date <= today);
+      const days = new Set(recent.map((c) => c.date)).size;
+      const inPerson = new Set(recent.filter((c) => IN_PERSON.has(c.type)).map((c) => c.date)).size;
+      d.parts.push(clamp((days / 5) * 100));
+      d.parts.push(clamp((inPerson / 2) * 100));
+      if (inPerson >= 2) d.good.push(`Je zag ${inPerson} dagen iemand in het echt in de afgelopen week.`);
+      else if (!recent.length) { d.bad.push('Je hebt de afgelopen week geen contact met anderen genoteerd.'); d.tips.push('Stuur vandaag één iemand een berichtje of spreek af voor een wandeling – klein beginnen is genoeg.'); }
+      else { d.bad.push(`Je zag deze week ${inPerson === 1 ? 'maar 1 dag' : 'niemand'} iemand in het echt.`); d.tips.push('Plan deze week één afspraak in het echt, bijvoorbeeld koffie of samen wandelen.'); }
+      if (days >= 5) d.good.push(`Je had op ${days} van de 7 dagen contact met anderen.`);
+      else if (recent.length) d.mid.push(`Je had op ${days} van de 7 dagen contact met anderen.`);
+    }
+    const lonely = average(data.checkins, 'loneliness', addDays(today, -13), today);
+    if (lonely && lonely.n >= 2) {
+      d.parts.push(clamp(100 - lonely.avg * 10));
+      if (lonely.avg <= 3) d.good.push(`Je voelt je zelden eenzaam (${r1(lonely.avg)}/10).`);
+      else if (lonely.avg >= 6) { d.bad.push(`Je voelt je vaak eenzaam (${r1(lonely.avg)}/10).`); d.tips.push('Praat erover met iemand die je vertrouwt, je huisarts, of De Luisterlijn (088 0767 000, dag en nacht).'); }
+      else d.mid.push(`Je voelt je soms eenzaam (${r1(lonely.avg)}/10).`);
+    }
+    return finish(d);
+  }
+
   /** Signalen die je niet moet wegmiddelen: altijd apart tonen. */
   function redFlags(data, today) {
     const flags = [];
@@ -277,7 +304,7 @@
    * @returns {{score:number|null, label, kind, confidence, domains, flags, good, bad, tips, missing}}
    */
   function compute(data, today) {
-    const all = [sleep, movement, nutrition, mental, physical, substances, medication, measurements].map((f) => f(data, today));
+    const all = [sleep, movement, nutrition, mental, social, physical, substances, medication, measurements].map((f) => f(data, today));
     const scored = all.filter((d) => d.score != null);
     const missing = all.filter((d) => d.score == null);
     const flags = redFlags(data, today);

@@ -42,6 +42,7 @@
         href: '#/welzijn',
       });
     }
+    out.push(...views.social.alerts(today));
     for (const w of views.bowel.warnings(today)) out.push({ kind: 'bad', text: w, href: '#/stoelgang' });
     const lastLab = sortBy(store.list('labs'), 'date', -1)[0];
     if (lastLab) {
@@ -63,7 +64,7 @@
     const upcoming = sortBy(store.list('visits').filter((v) => v.date >= today), (v) => v.date + (v.time || '')).slice(0, 3);
     const warn = alerts(today);
     const quit = views.substances.quitStats(today);
-    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain', 'sport', 'bowel', 'food'].some((c) => store.list(c).length);
+    const isEmpty = !['medications', 'labs', 'visits', 'checkins', 'prescriptions', 'vaccinations', 'pain', 'sport', 'bowel', 'food', 'contacts'].some((c) => store.list(c).length);
     const painToday = store.list('pain').filter((e) => e.date === today);
 
     el.innerHTML = `
@@ -115,6 +116,7 @@
             <button class="btn small ghost" data-food>🥗 Eten</button>
             <button class="btn small ghost" data-sleep>🌙 Slaap</button>
             <button class="btn small ghost" data-subst>🍷 Middelen</button>
+            <button class="btn small ghost" data-contact>👥 Contact</button>
             <button class="btn small ghost" data-env>🌳 Omgeving</button>
           </div>
           ${painToday.length ? `<p class="muted">Vandaag ${painToday.length}× pijn genoteerd (hoogste ${Math.max(...painToday.map((e) => e.intensity))}/10) · <a href="#/pijn">bekijk</a></p>` : ''}
@@ -164,6 +166,7 @@
     views.night.bindCard(el);
     el.querySelector('[data-sleep]').addEventListener('click', () => views.sleep.openSleep(today));
     el.querySelector('[data-subst]').addEventListener('click', () => views.substances.openDay(today));
+    el.querySelector('[data-contact]').addEventListener('click', () => views.social.openContact());
     el.querySelector('[data-env]').addEventListener('click', () => views.environment.openDay(today));
     views.medication.bindDoses(el);
   }

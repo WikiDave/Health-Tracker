@@ -37,6 +37,8 @@
           status: () => { const n = store.list('bowel').filter((e) => e.date === today()).length; return n ? `Vandaag ${n}×` : ''; } },
         { route: 'middelen', icon: '🍷', label: 'Middelen', text: 'Alcohol, roken, cafeïne, drugs',
           status: () => { const q = views.substances.quitStats(today()); return q ? `🚭 ${q.days} dagen rookvrij` : ''; } },
+        { route: 'sociaal', icon: '👥', label: 'Sociale kring', text: 'Met wie je omgaat en hoe vaak',
+          status: () => { const w = views.social.thisWeek(today()); return w.count ? `${w.daysWithContact} van 7 dagen contact` : ''; } },
         { route: 'omgeving', icon: '🌳', label: 'Omgeving', text: 'Werk, buiten, feest en sociaal',
           status: () => { const c = dayRec(); return c.work || c.outsideMinutes != null ? 'Vandaag ingevuld' : ''; } },
       ],

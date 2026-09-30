@@ -90,6 +90,7 @@
     const outOfRange = (v) => (opts.low != null && v < opts.low) || (opts.high != null && v > opts.high);
 
     // Lijnen en punten
+    const usedLabelY = [];
     for (const s of series) {
       const pts = [...s.points].sort((a, b) => (a.date < b.date ? -1 : 1));
       if (pts.length > 1) {
@@ -100,7 +101,12 @@
       }
       if (series.length > 1) {
         const last = pts[pts.length - 1];
-        const lbl = el('text', { x: Math.min(x(last.date) + 6, W - 2), y: y(last.value) - 8, class: 'direct-label', 'text-anchor': x(last.date) > W - 60 ? 'end' : 'start' }, svg);
+        // Labels van lijnen die dicht bij elkaar eindigen niet over elkaar zetten.
+        let ly = y(last.value) - 8;
+        const dir = ly + 32 > m.top + ih ? -1 : 1;
+        for (let k = 0; k < 6 && usedLabelY.some((u) => Math.abs(u - ly) < 15); k++) ly += 16 * dir;
+        usedLabelY.push(ly);
+        const lbl = el('text', { x: Math.min(x(last.date) + 6, W - 2), y: ly, class: 'direct-label', 'text-anchor': x(last.date) > W - 60 ? 'end' : 'start' }, svg);
         lbl.textContent = s.name;
       }
     }

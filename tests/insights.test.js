@@ -87,3 +87,16 @@ test('leesbare zinnen voor schalen, hoeveelheden en ja/nee', () => {
   assert.equal(I.valueText('coffee', 4), 'Koffie: 4 koppen');
   assert.equal(I.valueText('snoozed', true), 'Snoozen');
 });
+
+test('sociaal in de dagtabel: pas vanaf het eerste genoteerde contact', () => {
+  const d = sample();
+  d.contacts = [{ date: day(3), type: 'Afgesproken / bezoek', duration: 60 }, { date: day(3), type: 'Bellen', duration: 10 }];
+  const rows = I.table(d);
+  const r3 = rows.find((x) => x.date === day(3));
+  assert.equal(r3.contacts, 2);
+  assert.equal(r3.inPerson, true);
+  assert.equal(r3.socialMin, 70);
+  assert.equal(r3.social, true);
+  assert.equal(rows.find((x) => x.date === day(2)).contacts, 0);
+  assert.equal(rows.find((x) => x.date === day(10)).contacts, null);
+});

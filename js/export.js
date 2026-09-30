@@ -52,7 +52,7 @@
           'Slaap (uur)', 'Slaapkwaliteit (1-5)', 'Bloeddruk boven', 'Bloeddruk onder', 'Hartslag', 'Gewicht (kg)', 'Temperatuur (°C)', 'Bloedsuiker (mmol/L)', 'Saturatie (%)', 'Water (glazen)', 'Klachten', 'Notities'],
         rows: sortBy(data.checkins, 'date', -1).map((c) => [
           d(c.date), c.mood, c.energy, c.pain, c.fatigue, c.fatigueImpact, c.restedWaking, c.restBreaks,
-          c.stress, c.anxiety, c.gloom, c.focus, c.restless, c.overstimulated, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
+          c.stress, c.anxiety, c.gloom, c.focus, c.restless, c.overstimulated, c.loneliness, c.mentalNotes, c.positive, c.libido, c.intimateNotes, c.steps, c.sleepHours, c.sleepQuality, c.systolic, c.diastolic, c.heartRate,
           c.weight, c.temperature, c.glucose, c.oxygen, c.water, c.symptoms, c.notes,
         ]),
       },
@@ -145,6 +145,21 @@
         columns: ['Datum', 'Werk', 'Uren', 'Werkdruk (0-10)', 'Buiten (min)', 'Weer', 'Feest / uitgaan', 'Mensen gezien', 'Onderweg', 'Veel alleen', 'Schermtijd (u)', 'Druk / lawaai', 'Bijzonderheden'],
         rows: sortBy(data.checkins.filter(HT.views.environment.hasEnv), 'date', -1).map((c) => [
           d(c.date), c.work, c.workHours, c.workLoad, c.outsideMinutes, c.weather, Boolean(c.party), Boolean(c.social), Boolean(c.travel), Boolean(c.alone), c.screenTime, Boolean(c.busyPlace), c.envNotes,
+        ]),
+      },
+      {
+        name: 'Sociale kring',
+        columns: ['Naam', 'Relatie', 'Kring', 'Contactwens', 'Laatste contact', 'Laatste keer in het echt', 'Aantal contacten', 'Verjaardag', 'Telefoon', 'Notities'],
+        rows: sortBy(data.people || [], 'name').map((p) => {
+          const st = HT.social.personStatus(p, data.contacts || [], HT.utils.todayISO());
+          return [p.name, p.relation, (HT.social.CIRCLES.find((c) => c.key === p.circle) || {}).label, (HT.social.FREQ.find((f) => f[0] === p.wish) || [])[1], d(st.last), d(st.lastInPerson), st.count, d(p.birthday), p.phone, p.notes];
+        }),
+      },
+      {
+        name: 'Contacten',
+        columns: ['Datum', 'Tijd', 'Met wie', 'Hoe', 'In het echt', 'Duur (min)', 'Energie (-2 tot +2)', 'Hoe fijn (1-5)', 'Notities'],
+        rows: sortBy(data.contacts || [], (c) => c.date + (c.time || ''), -1).map((c) => [
+          d(c.date), c.time, HT.views.social.names(c), c.type, HT.social.isInPerson(c), c.duration, c.feel, c.quality, c.notes,
         ]),
       },
       {

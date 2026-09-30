@@ -4,7 +4,7 @@
   const { uid, doseKey, parseNum } = HT.utils;
 
   const KEY = 'health-tracker-v1';
-  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel', 'food', 'recipes', 'tasks', 'focus', 'braindump', 'procrastination'];
+  const COLLECTIONS = ['medications', 'prescriptions', 'labs', 'visits', 'checkins', 'vaccinations', 'pain', 'questionnaires', 'sport', 'bowel', 'food', 'recipes', 'tasks', 'focus', 'braindump', 'procrastination', 'people', 'contacts'];
 
   function empty() {
     return {
@@ -27,6 +27,8 @@
       focus: [],
       braindump: [],
       procrastination: [],
+      people: [],
+      contacts: [],
       mealPlans: {},
       settings: {},
     };

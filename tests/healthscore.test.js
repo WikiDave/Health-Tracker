@@ -33,7 +33,7 @@ function unhealthy() {
 test('te weinig gegevens geeft geen score', () => {
   const r = hs.compute(empty(), TODAY);
   assert.equal(r.score, null);
-  assert.equal(r.missing.length, 8);
+  assert.equal(r.missing.length, 9);
 });
 
 test('gezond leefpatroon scoort hoog met vooral goede punten', () => {
@@ -110,4 +110,19 @@ test('duidelijke aandachtspunten staan voor milde opmerkingen', () => {
   const r = hs.compute(d, TODAY);
   assert.match(r.bad[0].text, /bloeddruk/);
   assert.ok(r.bad.slice(1).every((b) => b.mild));
+});
+
+test('sociaal: contact in het echt en eenzaamheid tellen mee', () => {
+  const alone = Object.assign(empty(), { contacts: [{ date: u.addDays(TODAY, -20), type: 'Bellen' }], checkins: days(5, () => ({ loneliness: 8 })) });
+  const s1 = hs.compute(alone, TODAY).domains.find((d) => d.key === 'social');
+  assert.ok(s1.score < 30, `score ${s1.score}`);
+  assert.ok(s1.bad.some((t) => /geen contact/.test(t)));
+  assert.ok(s1.tips.some((t) => /Luisterlijn/.test(t)) || s1.tips.length);
+  const social = Object.assign(empty(), {
+    contacts: days(6, (i) => ({ type: i % 2 ? 'Bellen' : 'Afgesproken / bezoek' })),
+    checkins: days(5, () => ({ loneliness: 1 })),
+  });
+  const s2 = hs.compute(social, TODAY).domains.find((d) => d.key === 'social');
+  assert.ok(s2.score >= 90, `score ${s2.score}`);
+  assert.equal(s2.bad.length, 0);
 });
