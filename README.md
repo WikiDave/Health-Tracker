@@ -103,6 +103,18 @@ Voor als beginnen moeilijk is of je snel afgeleid raakt (Dagboek → 🎯 Focus 
 | 💉 **Vaccinaties** | Welke prik, wanneer, batchnummer en wanneer de volgende nodig is (met waarschuwing). |
 | 👤 **Profiel** | Allergieën, aandoeningen, huisarts, apotheek, noodcontact. Plus een **medisch overzicht** om te printen of als PDF op te slaan voor de dokter, en een **export naar Excel** (een tabblad per onderdeel). |
 
+## 💾 Je gegevens niet kwijtraken (Profiel → Back-up)
+
+Je gegevens staan alleen in de browser op je apparaat. Zo raak je ze niet kwijt:
+
+1. **Maak regelmatig een back-up en bewaar die buiten je telefoon.** Op je telefoon kies je na *Back-up maken* zelf waar het bestand heen gaat (Google Drive, iCloud Drive, OneDrive, mail…). Op de computer wordt het gedownload. Als je wilt, beveilig je de back-up met een **wachtwoord** (AES-256-versleuteling); zonder dat wachtwoord kan niemand hem openen.
+2. **Herinnering**: staat op het startscherm als het tijd is (elke week, 2 weken of maand; instelbaar), of als je nog nooit een back-up hebt gemaakt.
+3. **Zet de app op je beginscherm.** Op de iPhone ruimt Safari anders gegevens op van websites die je een week niet opent.
+4. **Blijvende opslag**: de app vraagt de browser de gegevens niet op te ruimen.
+5. **Herstelpunten**: de app bewaart zelf elke dag een kopie (14 dagen) in een tweede opslag van de browser, en ook vlak voor je een back-up terugzet of alles wist. Lijken je gegevens weg, dan biedt het startscherm aan ze terug te zetten.
+6. **Terugzetten**: je ziet eerst wat er in de back-up zit en kiest dan *samenvoegen* (bv. van een ander apparaat) of *alles vervangen*.
+7. Wis nooit de *site- of websitegegevens* van je browser, en blijf dezelfde browser en hetzelfde webadres gebruiken.
+
 ## Privacy
 
 Er is geen server en geen account. **Al je gegevens blijven alleen in de browser op je eigen apparaat** (localStorage). Omdat alles lokaal staat:

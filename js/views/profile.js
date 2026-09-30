@@ -81,10 +81,10 @@
       </section>
 
       <section class="card">
-        <h2>Back-up</h2>
-        <p>Je gegevens staan <strong>alleen in deze browser op dit apparaat</strong>. Maak regelmatig een back-up, bijvoorbeeld om over te zetten naar een ander apparaat.</p>
+        <div class="card-head"><h2>💾 Back-up</h2><a href="#/backup">Alles over back-ups</a></div>
+        <p>Je gegevens staan <strong>alleen in deze browser op dit apparaat</strong>. Laatste back-up: <strong>${esc(HT.views.backup.when(store.data.settings.lastBackup))}</strong>.</p>
         <div class="button-row">
-          <button class="btn ghost" data-export>⬇ Back-up downloaden</button>
+          <button class="btn primary" data-export>💾 Back-up maken</button>
           <label class="btn ghost">⬆ Back-up terugzetten<input type="file" accept="application/json,.json" data-import hidden></label>
         </div>
         ${store.data.updatedAt ? `<p class="muted">Laatst gewijzigd: ${esc(new Date(store.data.updatedAt).toLocaleString('nl-NL'))}</p>` : ''}
@@ -120,24 +120,18 @@
     const notifyOn = el.querySelector('[data-notify-on]');
     if (notifyOn) notifyOn.addEventListener('click', () => HT.reminders.enable());
 
-    el.querySelector('[data-export]').addEventListener('click', () => {
-      ui.download(`gezondheid-backup-${todayISO()}.json`, store.exportJSON());
-    });
+    el.querySelector('[data-export]').addEventListener('click', () => HT.views.backup.openMake());
 
-    el.querySelector('[data-import]').addEventListener('change', async (e) => {
+    el.querySelector('[data-import]').addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if (!file) return;
-      if (!confirm('Hiermee vervang je alle huidige gegevens door de back-up. Doorgaan?')) return;
-      try {
-        store.importJSON(await file.text());
-        ui.toast('Back-up teruggezet');
-      } catch (err) {
-        alert('Terugzetten mislukt: ' + err.message);
-      }
+      e.target.value = '';
+      if (file) HT.views.backup.restoreFile(file);
     });
 
-    el.querySelector('[data-clear]').addEventListener('click', () => {
+    el.querySelector('[data-clear]').addEventListener('click', async () => {
       if (confirm('Weet je zeker dat je ALLE gegevens wilt wissen?') && confirm('Echt zeker? Maak eventueel eerst een back-up.')) {
+        // Vangnet voor een vergissing: eerst een herstelpunt (terug te zetten via Back-up → Herstelpunten).
+        try { await HT.safety.snapshot('Voor het wissen van alle gegevens'); } catch (e) { /* geen herstelpunt mogelijk */ }
         store.clearAll();
         ui.toast('Alle gegevens gewist');
       }

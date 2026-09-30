@@ -52,6 +52,7 @@
   }
 
   const listeners = new Set();
+  const saveListeners = new Set();
 
   /** Slaat op. Met silent = true wordt het scherm niet opnieuw getekend (bv. bij het afvinken van boodschappen). */
   function save(silent) {
@@ -59,14 +60,26 @@
     try {
       localStorage.setItem(KEY, JSON.stringify(data));
     } catch (e) {
-      alert('Opslaan is mislukt: ' + e.message);
+      alert(`Opslaan is mislukt: ${e.message}\n\nMaak nu een back-up (Profiel → Back-up), zodat je niets kwijtraakt.`);
     }
+    saveListeners.forEach((fn) => { try { fn(); } catch (err) { /* reservekopie mag opslaan nooit blokkeren */ } });
     if (!silent) listeners.forEach((fn) => fn());
   }
 
   const store = {
     get data() {
       return data;
+    },
+
+    /** Wordt na elke opslag aangeroepen, ook stille (voor de automatische herstelpunten). */
+    onSave(fn) {
+      saveListeners.add(fn);
+    },
+
+    /** Vervangt alle gegevens (terugzetten of samenvoegen van een back-up). */
+    replace(newData) {
+      data = normalize(newData);
+      save();
     },
 
     onChange(fn) {
