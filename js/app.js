@@ -28,6 +28,7 @@
     vaccinaties: views.vaccinations,
     profiel: views.profile,
     overzicht: views.overview,
+    backup: views.backup,
     verbanden: views.insights,
     dag: views.day,
     ...HT.menu.hubRoutes,

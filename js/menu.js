@@ -68,7 +68,7 @@
   ];
 
   // Routes die bij het profiel horen (voor de actieve markering).
-  const PROFILE_ROUTES = ['profiel', 'overzicht'];
+  const PROFILE_ROUTES = ['profiel', 'overzicht', 'backup'];
 
   /** Geeft de groep terug waar een route bij hoort (of de groep zelf). */
   function groupOf(route) {
